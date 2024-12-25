@@ -24,4 +24,4 @@ Refreshing the browser will generate a new board, so be careful not to refresh w
 ## Addon words
 To add extra words to the basic set, add a query parameter "addon" with the values of the words separated by comma.
 Eg.
-> https://lpoon94087.github.io/codenames/board.htm?addon=LAURIE,SU,BEN,ANITA
+> https://lpoon94087.github.io/codenames/board.html?addon=LAURIE,SU,BEN,ANITA
