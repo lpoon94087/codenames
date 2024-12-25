@@ -8,7 +8,7 @@ which will display the key card on a mobile device.
 
 Clicking on the words will toggle between the different colors (tan, grey, blue, red and black), denoting the different states.
 
-Refreshing the board generate a new board, so be careful not to refresh while in the middle of gameplay.
+Refreshing the browser will generate a new board, so be careful not to refresh while in the middle of gameplay.
 
 Link to board -> https://lpoon94087.github.io/codenames/board.html
 
