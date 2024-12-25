@@ -91,12 +91,13 @@
         // Access specific parameters.
         // addon is an addition lists of words to add, eg. ?addon="LAURIE,SU"
         const addon = params.get('addon');
-        console.log('Addon:', addon);
-        const moreWords = addon.split(",");
-        console.log('moreWords:', moreWords);
-        wordList.push(...moreWords);
-        console.log('wordList:', wordList);
-
+        if (addon === null) {
+            console.log('No addon");
+        } else {
+            console.log('Using addon:', addon);
+            const moreWords = addon.split(",");
+            wordList.push(...moreWords);
+        }
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
