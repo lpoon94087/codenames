@@ -1,17 +1,5 @@
+// Default word list for Codenames
 const wordList = [ 
-  // WORDS FOR HOLIDAY FUN!
-  "SU",
-  "LAURIE",
-  "BEN",
-  "ANITA",
-  "OTTO",
-  "LISA",
-  "GABBY",
-  "CONRAD",
-  "VIENNE",
-  "CARMEN",
-  "TUCKER",
-  
     "AFRICA",
     "AGENT",
     "AIR",
