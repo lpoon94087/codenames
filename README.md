@@ -1,5 +1,7 @@
 # Display Board for Codenames
 
+![Sample screen](img/sample_screen.png)
+
 This project is for playing Codenames on a large shared screen (eg. TV).
 It will display a similar Codenames board (5x5) grid with exactly the same set of Codenames words.
 
