@@ -80,27 +80,20 @@
 <body>
     <div class="board" id="wordBoard"></div>
 
-    <!-- Load the external data file first -->
-    //  <script src="data.js"></script>
-    const wordList = [
+    <script>
+        const wordList = [
             'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
             'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
             'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
             'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
             'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
-    ];
-    
-    <!-- Main script that uses the data -->
-    <script>
+        ];
+
         function getRandomItems(arr, count) {
-            const shuffled = [...arr];
-            // Fisher-Yates shuffle
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
+            const shuffled = [...arr].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, count);
         }
+
         const selectedWords = getRandomItems(wordList, 25);
         const board = document.getElementById('wordBoard');
 
