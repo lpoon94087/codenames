@@ -83,11 +83,15 @@
     <script src="data.js"></script>
 
     <script>
+        // Function to get random items from array
         function getRandomItems(arr, count) {
-            const shuffled = [...arr].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, count);
+            const shuffled = [...arr]; // Clone the array to avoid modifying the original
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+            }
+            return shuffled.slice(0, count); // Return the first `count` items
         }
-
         const selectedWords = getRandomItems(wordList, 25);
         const board = document.getElementById('wordBoard');
 
