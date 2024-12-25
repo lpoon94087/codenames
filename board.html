@@ -79,11 +79,10 @@
 </head>
 <body>
     <div class="board" id="wordBoard"></div>
+    <!-- Load the external data file first -->
+    <script src="data.js"></script>
 
     <script>
-        <!-- Load the external data file first -->
-        <script src="data.js"></script>
-
         function getRandomItems(arr, count) {
             const shuffled = [...arr].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, count);
