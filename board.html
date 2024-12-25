@@ -79,16 +79,11 @@
 </head>
 <body>
     <div class="board" id="wordBoard"></div>
+    
+    <!-- Load the external data file first -->
+    <script src="data.js"></script>
 
     <script>
-        const wordList = [
-            'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
-            'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
-            'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
-            'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
-            'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
-        ];
-
         // Get the query string (everything after ?)
         const queryString = window.location.search;
         // Create a URLSearchParams object
@@ -101,12 +96,18 @@
         console.log('moreWords:', moreWords);
         wordList.push(...moreWords);
         console.log('wordList:', wordList);
-    </script>
-    
-    <!-- Load the external data file first -->
-    <script src="data.js"></script>
 
-    <script>
+        if (wordList.count < 25) {
+            const sampleWords = [
+                'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
+                'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
+                'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
+                'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
+                'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
+            ];
+            wordList.push(...sampleWords);
+        }
+
         // Function to get random items from array
         function getRandomItems(arr, count) {
             const shuffled = [...arr]; // Clone the array to avoid modifying the original
