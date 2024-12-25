@@ -24,11 +24,12 @@
             max-width: 1000px;
         }
 
-        .card-container {
+        .card-wrapper {
             position: relative;
-            padding: 4px;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.2);
+            border: 3px solid #473831;  /* Darker brown border */
+            border-radius: 12px;
+            padding: 8px;
+            background-color: #3a2a22;  /* Slightly lighter than background for contrast */
         }
 
         .card {
@@ -80,7 +81,14 @@
     <div class="board" id="wordBoard"></div>
 
     <!-- Load the external data file first -->
-    <script src="data.js"></script>
+    //  <script src="data.js"></script>
+    const wordList = [
+            'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
+            'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
+            'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
+            'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
+            'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
+    ];
     
     <!-- Main script that uses the data -->
     <script>
@@ -97,8 +105,8 @@
         const board = document.getElementById('wordBoard');
 
         selectedWords.forEach(word => {
-            const container = document.createElement('div');
-            container.className = 'card-container';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'card-wrapper';
 
             const card = document.createElement('div');
             card.className = 'card color-0';
@@ -124,8 +132,8 @@
                 }, 600);
             });
 
-            container.appendChild(card);
-            board.appendChild(container);
+            wrapper.appendChild(card);
+            board.appendChild(wrapper);
         });
     </script>
 </body>
