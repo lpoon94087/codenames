@@ -3,7 +3,7 @@
 This project is for playing Codenames on a large shared screen (eg. TV).
 It will display a similar Codenames board (5x5) grid with exactly the same set of Codenames words.
 
-The spymaster will need to use a real key card from the boardgame, or they can use the "Codenames Gadget",
+The spymasters will need to use a real key card from the boardgame, or they can use the "Codenames Gadget" app,
 which will display the key card on a mobile device.
 
 Clicking on the words will toggle between the different colors (tan, grey, blue, red and black), denoting the different states.
