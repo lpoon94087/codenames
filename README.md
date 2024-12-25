@@ -1,6 +1,6 @@
 # Display Board for Codenames
 
-![Sample screen](img/sample_screen.png)
+[![Sample screen](img/sample_screen.png)](https://lpoon94087.github.io/codenames/board.html)
 
 This project is for playing Codenames on a large shared screen (eg. TV).
 
