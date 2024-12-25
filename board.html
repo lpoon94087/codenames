@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Board</title>
     <style>
-        body {
+       body {
             background-color: #2e1810;
             display: flex;
             justify-content: center;
@@ -26,10 +26,10 @@
 
         .card-wrapper {
             position: relative;
-            border: 3px solid #473831;  /* Darker brown border */
+            border: 3px solid #473831;
             border-radius: 12px;
             padding: 8px;
-            background-color: #3a2a22;  /* Slightly lighter than background for contrast */
+            background-color: #3a2a22;
         }
 
         .card {
@@ -50,20 +50,40 @@
             margin: 0;
         }
 
+        .card.locked {
+            color: transparent;
+        }
+
+        .lock-indicator {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .lock-indicator::before {
+            content: '🔒';
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: white;
+        }
+
+        .card.locked .lock-indicator::before {
+            opacity: 1;
+        }
+
         .card.flipping {
             animation: flip 0.6s ease-in-out;
         }
 
         @keyframes flip {
-            0% {
-                transform: rotateY(0);
-            }
-            50% {
-                transform: rotateY(90deg);
-            }
-            100% {
-                transform: rotateY(0);
-            }
+            0% { transform: rotateY(0); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0); }
         }
 
         .card:hover {
@@ -130,9 +150,19 @@
             card.className = 'card color-0';
             card.textContent = word;
             card.dataset.colorIndex = '0';
+
+            const lockIndicator = document.createElement('div');
+            lockIndicator.className = 'lock-indicator';
+            card.appendChild(lockIndicator);
             
-            card.addEventListener('click', () => {
-                if (card.classList.contains('flipping')) return;
+            card.addEventListener('click', (e) => {
+                if (e.target === lockIndicator) {
+                    card.classList.toggle('locked');
+                    return;
+                }
+
+                if (card.classList.contains('locked') || 
+                    card.classList.contains('flipping')) return;
                 
                 card.classList.add('flipping');
                 
