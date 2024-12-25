@@ -79,6 +79,30 @@
 </head>
 <body>
     <div class="board" id="wordBoard"></div>
+
+    <script>
+        const wordList = [
+            'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
+            'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
+            'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
+            'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
+            'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
+        ];
+
+        // Get the query string (everything after ?)
+        const queryString = window.location.search;
+        // Create a URLSearchParams object
+        const params = new URLSearchParams(queryString);
+        // Access specific parameters.
+        // addon is an addition lists of words to add, eg. ?addon="LAURIE,SU"
+        const addon = params.get('addon');
+        console.log('Addon:', addon);
+        const moreWords = addon.split(",");
+        console.log('moreWords:', moreWords);
+        wordList.push(...moreWords);
+        console.log('wordList:', wordList);
+    </script>
+    
     <!-- Load the external data file first -->
     <script src="data.js"></script>
 
