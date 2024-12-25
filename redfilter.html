@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image with Red Overlay</title>
+    <title>Image with Toggleable Overlays</title>
     <style>
         .image-container {
             position: relative;
@@ -20,32 +20,42 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 0, 0, 0.5); /* Red with 50% transparency */
             pointer-events: none; /* Makes the overlay non-interactive */
+        }
+
+        .overlay.red {
+            background-color: rgba(255, 0, 0, 0.5); /* Red with 50% transparency */
+        }
+
+        .overlay.blue {
+            background-color: rgba(0, 0, 255, 0.5); /* Blue with 50% transparency */
         }
     </style>
 </head>
 <body>
-    <H>RED IMAGE FILTER TEST</H>
-    <div class="image-container">
-        <img src="img/laurie.png" alt="Sample Image">
-        <div class="overlay"></div>
-    </div>
     <div class="image-container">
         <img src="img/laurie_200.png" alt="Sample Image">
-        <div class="overlay"></div>
+        <div id="overlay" class="overlay"></div>
     </div>
+    <button id="toggleOverlay">Toggle Overlay</button>
 
-
-    <button id="toggleOverlay">Toggle Red Filter</button>
     <script>
+        const overlay = document.getElementById('overlay');
         const button = document.getElementById('toggleOverlay');
-        const overlay = document.querySelector('.overlay');
-    
+        let currentState = 0; // 0: none, 1: red, 2: blue
+
         button.addEventListener('click', () => {
-            overlay.style.display = overlay.style.display === 'none' ? 'block' : 'none';
+            currentState = (currentState + 1) % 3; // Cycle through 0, 1, 2
+
+            // Reset overlay classes
+            overlay.className = 'overlay';
+
+            if (currentState === 1) {
+                overlay.classList.add('red');
+            } else if (currentState === 2) {
+                overlay.classList.add('blue');
+            }
         });
     </script>
-
 </body>
 </html>
