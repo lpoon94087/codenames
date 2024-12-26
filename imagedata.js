@@ -12,11 +12,7 @@
         'img/red_110.png', 
         'img/red_111.png', 
         'img/red_112.png', 
-        'img/red_113.png', 
-        'img/red_114.png', 
-        'img/red_115.png', 
-        'img/red_116.png', 
-        'img/red_117.png'
+        'img/red_113.png'
     ];
     const blueImages = [
         'img/blue_100.png',
