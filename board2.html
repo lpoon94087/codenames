@@ -191,8 +191,12 @@
             card.className = 'card color-0';
             card.textContent = word;
             card.dataset.colorIndex = '0';
-            card.locked.color-2.background-image = `url('${getRandomImage(redImages)}')`;
-            card.locked.color-3.background-image = `url('${getRandomImage(blueImages)}')`;
+            const redImage = getRandomImage(redImages);
+            const blueImage = getRandomImage(blueImages);
+            console.log('redImage:', redImage);
+            console.log('blueImage:', blueImage);
+            card.locked.color-2.background-image = `url('${redImage}')`;
+            card.locked.color-3.background-image = `url('${blueImage}')`;
 
             const lockIndicator = document.createElement('div');
             lockIndicator.className = 'lock-indicator';
