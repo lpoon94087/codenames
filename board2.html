@@ -203,7 +203,7 @@
                     cardElements.forEach((tmpCard, index) => {
                         redImage = getRandomImage(redImages);
                         console.log('redImage:', redImage);
-                        tmpCard.style.background-image =  `url(${redImage})`;
+                        tmpCard.style.backgroundImage = "url('" + redImage + "')";
                         console.log('card:', card);
                     });
                     return;
