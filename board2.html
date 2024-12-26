@@ -200,10 +200,10 @@
                 if (e.target === lockIndicator) {
                     card.classList.toggle('locked');
                     const cardElements = document.querySelectorAll('.card.locked.color-2');
-                    cardElements.forEach((card, index) => {
+                    cardElements.forEach((tmpCard, index) => {
                         redImage = getRandomImage(redImages);
                         console.log('redImage:', redImage);
-                        card.style.background-image =  `url(${redImage})`;
+                        tmpCard.style.background-image =  `url(${redImage})`;
                         console.log('card:', card);
                     });
                     return;
