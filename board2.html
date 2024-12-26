@@ -54,39 +54,21 @@
             color: transparent;
         }
         
-        .card.locked.color-2 { /* Red image */
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.locked.color-2::after { /* Red Overlay*/
+        .card.locked::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 0, 0, 0.5); /* 50% transparent red */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             pointer-events: none;
+            z-index: 1;
         }
-        
-        .card.locked.color-3 { /* Blue image*/
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.locked.color-3::after { /* Blue overlay */
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 255, 0.5); /* Blue with 50% transparency */
-            pointer-events: none; /* Makes the overlay non-interactive */
-        }
+        .card.locked.color-1::after { /* Red overlay - background image added via JS */ }
+        .card.locked.color-2::after { /* Blue overlay - background image added via JS */ }
 
         .lock-indicator {
             position: absolute;
