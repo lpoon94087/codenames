@@ -199,13 +199,14 @@
             card.addEventListener('click', (e) => {
                 if (e.target === lockIndicator) {
                     card.classList.toggle('locked');
-                    const cardElements = document.querySelectorAll('.card.locked.color-2');
-                    cardElements.forEach((tmpCard, index) => {
-                        redImage = getRandomImage(redImages);
-                        console.log('redImage:', redImage);
-                        tmpCard.style.backgroundImage = "url('" + redImage + "')";
-                        console.log('card:', card);
-                    });
+                    if (card.classList.contains('locked') && card.classList.contains('color-2')) {
+                        const redImage = getRandomImage(redImages);
+                        card.style.backgroundImage = `url('${redImage}')`;
+                    }
+                    if (card.classList.contains('locked') && card.classList.contains('color-3')) {
+                        const redImage = getRandomImage(blueImages);
+                        card.style.backgroundImage = `url('${blueImage}')`;
+                    }
                     return;
                 }
 
