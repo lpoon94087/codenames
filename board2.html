@@ -53,22 +53,40 @@
         .card.locked {
             color: transparent;
         }
-        
-        .card.locked::after {
+
+        .card.locked.color-2 { /* Red image */
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.locked.color-2::after { /* Red Overlay*/
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-color: rgba(255, 0, 0, 0.5); /* 50% transparent red */
+            pointer-events: none;
+        }
+
+        .card.locked.color-3 { /* Blue image*/
+            background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            pointer-events: none;
-            z-index: 1;
         }
-        .card.locked.color-2::after { /* Red overlay - background image added via JS */ }
-        .card.locked.color-3::after { /* Blue overlay - background image added via JS */ }
+        .card.locked.color-3::after { /* Blue overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 255, 0.5); /* Blue with 50% transparency */
+            pointer-events: none; /* Makes the overlay non-interactive */
+        }
 
         .lock-indicator {
             position: absolute;
@@ -115,7 +133,7 @@
 </head>
 <body>
     <div class="board" id="wordBoard"></div>
-    
+
     <!-- Load the external data file first -->
     <script src="data.js"></script>
     <script src="imagedata.js"></script>
@@ -147,12 +165,6 @@
         }
         console.log('wordList:', wordList);
 
-        // Helper function to get a random image from a list
-        function getRandomImage(imageList) {
-            const randomIndex = Math.floor(Math.random() * imageList.length);
-            return imageList[randomIndex];
-        }
-
         // Function to get random items from array
         function getRandomItems(arr, count) {
             const shuffled = [...arr]; // Clone the array to avoid modifying the original
@@ -177,7 +189,7 @@
             const lockIndicator = document.createElement('div');
             lockIndicator.className = 'lock-indicator';
             card.appendChild(lockIndicator);
-            
+
             card.addEventListener('click', (e) => {
                 if (e.target === lockIndicator) {
                     card.classList.toggle('locked');
@@ -186,14 +198,14 @@
 
                 if (card.classList.contains('locked') || 
                     card.classList.contains('flipping')) return;
-                
+
                 card.classList.add('flipping');
-                
+
                 setTimeout(() => {
                     const currentIndex = parseInt(card.dataset.colorIndex);
                     const nextIndex = (currentIndex + 1) % 5;
                     card.dataset.colorIndex = nextIndex;
-                    
+
                     card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
                     card.classList.add(`color-${nextIndex}`);
                 }, 300);
@@ -205,26 +217,6 @@
 
             wrapper.appendChild(card);
             board.appendChild(wrapper);
-        });
-
-        // Assign random image       
-        document.querySelectorAll('.card').forEach(card => {
-            const lockIndicator = card.querySelector('.lock-indicator');
-            lockIndicator.addEventListener('click', () => {
-                card.classList.toggle('locked');
-    
-                if (card.classList.contains('locked')) {
-                    const colorIndex = parseInt(card.dataset.colorIndex);
-    
-                    if (colorIndex === 1) { // Red
-                        card.style.setProperty('--locked-background', `url('${getRandomImage(redImages)}')`);
-                    } else if (colorIndex === 2) { // Blue
-                        card.style.setProperty('--locked-background', `url('${getRandomImage(blueImages)}')`);
-                    }
-                } else {
-                    card.style.setProperty('--locked-background', 'none');
-                }
-            });
         });
     </script>
 </body>
