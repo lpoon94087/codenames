@@ -199,6 +199,13 @@
             card.addEventListener('click', (e) => {
                 if (e.target === lockIndicator) {
                     card.classList.toggle('locked');
+                    const cardElements = document.querySelectorAll('.card.locked.color-2');
+                    cardElements.forEach((card, index) => {
+                        redImage = getRandomImage(redImages);
+                        console.log('redImage:', redImage);
+                        //card.style.background-image =  `url(${redImage})`;
+                        console.log('card:', card);
+                    });
                     return;
                 }
 
@@ -223,13 +230,6 @@
 
             wrapper.appendChild(card);
             board.appendChild(wrapper);
-        });
-        const cardElements = document.querySelectorAll('.card.locked.color-2');
-        cardElements.forEach((card, index) => {
-            redImage = getRandomImage(redImages);
-            console.log('redImage:', redImage);
-            //card.style.background-image =  `url(${redImage})`;
-            console.log('card:', card);
         });
     </script>
 </body>
