@@ -165,6 +165,12 @@
         }
         console.log('wordList:', wordList);
 
+        // Helper function to get a random image from a list
+        function getRandomImage(imageList) {
+            const randomIndex = Math.floor(Math.random() * imageList.length);
+            return imageList[randomIndex];
+        }
+
         // Function to get random items from array
         function getRandomItems(arr, count) {
             const shuffled = [...arr]; // Clone the array to avoid modifying the original
@@ -217,6 +223,26 @@
 
             wrapper.appendChild(card);
             board.appendChild(wrapper);
+        });
+
+        // Assign random image       
+        document.querySelectorAll('.card').forEach(card => {
+            const lockIndicator = card.querySelector('.lock-indicator');
+            lockIndicator.addEventListener('click', () => {
+                card.classList.toggle('locked');
+    
+                if (card.classList.contains('locked')) {
+                    const colorIndex = parseInt(card.dataset.colorIndex);
+    
+                    if (colorIndex === 1) { // Red
+                        card.style.setProperty('--locked-background', `url('${getRandomImage(redImages)}')`);
+                    } else if (colorIndex === 2) { // Blue
+                        card.style.setProperty('--locked-background', `url('${getRandomImage(blueImages)}')`);
+                    }
+                } else {
+                    card.style.setProperty('--locked-background', 'none');
+                }
+            });
         });
     </script>
 </body>
