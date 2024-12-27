@@ -204,7 +204,7 @@
                 if (e.target === lockIndicator) {
                     card.classList.toggle('locked');
                     if (card.classList.contains('locked') && card.classList.contains('color-2')) {
-                        if (redImageIndex > redImages.length-1) { redImagesIndex = 0; }
+                        if (redImageIndex > redImages.length-1) { redImageIndex = 0; }
                         const redImage = redImages[redImageIndex++];
                         card.style.backgroundImage = `url('${redImage}')`;
                     }
