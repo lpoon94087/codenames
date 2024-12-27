@@ -167,7 +167,7 @@
         // Return true if url is good
         async function validUrl(url) {
             const exists = await urlExists(url);
-            console.log(url, exists); // true or false
+            return exists;
         } 
         // Load images, per color, if they exists
         function loadCustomImagesColor(color, imgset, colorImages) {
@@ -219,6 +219,9 @@
             wordList.push(...sampleWords);
         }
         console.log('wordList:', wordList);
+        console.log('greyImages:', greyImages);
+        console.log('redImages:', redImages);
+        console.log('blueImages:', blueImages);
 
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
