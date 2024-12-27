@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Board</title>
@@ -50,30 +51,74 @@
             margin: 0;
         }
 
-        .card.locked {
+        .card.revealed {
             color: transparent;
         }
 
-        .lock-indicator {
+        .card.revealed.color-2 { /* Red image */
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-2::after { /* Red Overlay*/
+            content: '';
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            z-index: 2;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.5);
+            pointer-events: none;
         }
 
-        .lock-indicator::before {
-            content: '🔒';
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            color: white;
+        .card.revealed.color-3 { /* Blue image*/
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-3::after { /* Blue overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 255, 0.5);
+            pointer-events: none;
         }
 
-        .card.locked .lock-indicator::before {
-            opacity: 1;
+        .card.revealed.color-1 { /* Grey image */
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-1::after { /* Grey Overlay*/
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .card.revealed.color-4 { /* Black image*/
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-4::after { /* Black overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
         .card.flipping {
@@ -99,17 +144,38 @@
 </head>
 <body>
     <div class="board" id="wordBoard"></div>
-    
-    <!-- Load the external data file first -->
+
+    <script>
+        let wordList = []; 
+        let redImages = ["img/red.png"];
+        let blueImages = ["img/blue.png"];
+        let greyImages = ["img/grey.png"];
+        let blackImages = ["img/black.png"];
+    </script>
+    <!-- Load the wordlist -->
     <script src="data.js"></script>
 
     <script>
-        // Get the query string (everything after ?)
+        // Load images, per color, if they exists
+        function loadCustomImagesColor(color, imgset, colorImages) {
+            let images = [];
+            for (let i = 0; i < 20; i++) {
+                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
+                images.push(testImage);
+            }
+            if (images.length > 0) {
+                colorImages.length = 0;
+                colorImages.push(...images);
+            }
+        }
+        function loadCustomImages(imgset) {
+            loadCustomImagesColor("red", imgset, redImages);  
+            loadCustomImagesColor("blue", imgset, blueImages);  
+            loadCustomImagesColor("grey", imgset, greyImages);  
+            loadCustomImagesColor("black", imgset, blackImages);  
+        }
         const queryString = window.location.search;
-        // Create a URLSearchParams object
         const params = new URLSearchParams(queryString);
-        // Access specific parameters.
-        // addon is an addition lists of words to add, eg. ?addon="LAURIE,SU"
         const addon = params.get('addon');
         if (addon === null) {
             console.log('No addon');
@@ -118,6 +184,14 @@
             const moreWords = addon.split(",");
             wordList.push(...moreWords);
         }
+        const imgset = params.get('imgset');
+        console.log("imgset:", imgset);
+        if (imgset != null) {
+            // Load images if they exists
+            loadCustomImages(imgset);
+        }
+
+        // Create sample wordList if loading fails (eg. running html on editor)
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
@@ -129,19 +203,31 @@
             wordList.push(...sampleWords);
         }
         console.log('wordList:', wordList);
+        console.log('greyImages:', greyImages);
+        console.log('redImages:', redImages);
+        console.log('blueImages:', blueImages);
 
-        // Function to get random items from array
-        function getRandomItems(arr, count) {
-            const shuffled = [...arr]; // Clone the array to avoid modifying the original
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
-            return shuffled.slice(0, count); // Return the first `count` items
         }
+        
+        function getRandomItems(arr, count) {
+            const shuffled = [...arr];
+            shuffleArray(shuffled);
+            return shuffled.slice(0, count);
+        }
+
         const selectedWords = getRandomItems(wordList, 25);
         const board = document.getElementById('wordBoard');
-
+        shuffleArray(redImages);
+        shuffleArray(blueImages);
+        let redImageIndex = 0;
+        let blueImageIndex = 0;
+        let greyImageIndex = 0;
+        
         selectedWords.forEach(word => {
             const wrapper = document.createElement('div');
             wrapper.className = 'card-wrapper';
@@ -150,29 +236,57 @@
             card.className = 'card color-0';
             card.textContent = word;
             card.dataset.colorIndex = '0';
+            let revealTimer = null;
 
-            const lockIndicator = document.createElement('div');
-            lockIndicator.className = 'lock-indicator';
-            card.appendChild(lockIndicator);
-            
             card.addEventListener('click', (e) => {
-                if (e.target === lockIndicator) {
-                    card.classList.toggle('locked');
-                    return;
+                if (card.classList.contains('flipping')) return;
+
+                // Clear any pending reveal timer
+                if (revealTimer) {
+                    clearTimeout(revealTimer);
+                    revealTimer = null;
                 }
 
-                if (card.classList.contains('locked') || 
-                    card.classList.contains('flipping')) return;
-                
+                // Remove revealed state and image immediately on any click
+                card.classList.remove('revealed');
+                card.style.backgroundImage = '';
+
                 card.classList.add('flipping');
-                
+
                 setTimeout(() => {
                     const currentIndex = parseInt(card.dataset.colorIndex);
                     const nextIndex = (currentIndex + 1) % 5;
                     card.dataset.colorIndex = nextIndex;
-                    
+
                     card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
                     card.classList.add(`color-${nextIndex}`);
+
+                    // If the card becomes red, blue, grey or black start the reveal timer
+                    if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
+                        revealTimer = setTimeout(() => {
+                            card.classList.add('revealed');
+                            switch(nextIndex) {
+                                case 1: // Grey card
+                                    const greyImage = greyImages[0];
+                                    card.style.backgroundImage = `url('${greyImage}')`;
+                                    break;
+                                case 2: // Red card
+                                    if (redImageIndex >= redImages.length) { redImageIndex = 0; }
+                                    const redImage = redImages[redImageIndex++];
+                                    card.style.backgroundImage = `url('${redImage}')`;
+                                    break;
+                                case 3: // Blue card
+                                    if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
+                                    const blueImage = blueImages[blueImageIndex++];
+                                    card.style.backgroundImage = `url('${blueImage}')`;
+                                    break;
+                                case 4: // Black card
+                                   const blackImage = blackImages[0];
+                                   card.style.backgroundImage = `url('${blackImage}')`;
+                                 break;
+                            }
+                        }, 4000);
+                    }
                 }, 300);
 
                 setTimeout(() => {
