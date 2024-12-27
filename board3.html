@@ -176,12 +176,12 @@
                 const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
                 console.log("testImage = ", testImage);
                 if (validUrl(testImage)) {
-                    images.push(testImage);
+                    images.push(...testImage);
                 }
             }
             if (images.length > 0) {
                 colorImages.length = 0;
-                colorImages.push(images);
+                colorImages.push(...images);
             }
         }
         function loadCustomImages(imgset) {
