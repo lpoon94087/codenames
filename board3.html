@@ -156,7 +156,7 @@
     <script src="data.js"></script>
 
     <script>
-        function imageExists(url) {
+        function urlExists(url) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.onload = () => resolve(true);
@@ -186,7 +186,7 @@
         }
         function loadCustomImages(imgset) {
             loadCustomImagesColor("red", imgset, redImages);  
-            loadCustomImagesColor("blue", imgset, bluemages);  
+            loadCustomImagesColor("blue", imgset, blueImages);  
             loadCustomImagesColor("grey", imgset, greyImages);  
             loadCustomImagesColor("black", imgset, blackImages);  
         }
