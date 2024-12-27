@@ -164,13 +164,17 @@
         }
         console.log('wordList:', wordList);
 
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
+                [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+            }
+        }
+        
         // Function to get random items from array
         function getRandomItems(arr, count) {
             const shuffled = [...arr]; // Clone the array to avoid modifying the original
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
-            }
+            shuffleArray(suffled);
             return shuffled.slice(0, count); // Return the first `count` items
         }
 
@@ -182,6 +186,11 @@
 
         const selectedWords = getRandomItems(wordList, 25);
         const board = document.getElementById('wordBoard');
+        // Shuffle images
+        shuffleArray(redImages);
+        shuffleArray(blueImages);
+        redImageIndex = 0;
+        blueImageIndex = 0;
 
         selectedWords.forEach(word => {
             const wrapper = document.createElement('div');
@@ -200,11 +209,13 @@
                 if (e.target === lockIndicator) {
                     card.classList.toggle('locked');
                     if (card.classList.contains('locked') && card.classList.contains('color-2')) {
-                        const redImage = getRandomImage(redImages);
+                        if (redImageIndex > redImages.length-1) { redImagesIndex = 0; }
+                        const redImage = redImages[redImageIndex++];
                         card.style.backgroundImage = `url('${redImage}')`;
                     }
                     if (card.classList.contains('locked') && card.classList.contains('color-3')) {
-                        const blueImage = getRandomImage(blueImages);
+                        if (blueImageIndex > blueImages.length-1) { blueImageIndex = 0; }
+                        const blueImage = blueImages[blueImageIndex++];
                         card.style.backgroundImage = `url('${blueImage}')`;
                     }
                     return;
