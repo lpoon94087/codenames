@@ -164,7 +164,8 @@
                 img.src = url;
             });
         }
-        async function checkUrl(url) {
+        // Return true if url is good
+        async function validUrl(url) {
             const exists = await urlExists(url);
             console.log(url, exists); // true or false
         } 
