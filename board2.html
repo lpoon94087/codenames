@@ -210,7 +210,6 @@
                     }
                     if (card.classList.contains('locked') && card.classList.contains('color-3')) {
                         if (blueImageIndex > blueImages.length-1) { blueImageIndex = 0; }
-                        console.log("blueImageIndex=", blueImageIndex);
                         const blueImage = blueImages[blueImageIndex++];
                         card.style.backgroundImage = `url('${blueImage}')`;
                     }
