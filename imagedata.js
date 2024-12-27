@@ -34,12 +34,9 @@
         'img/blue_111.png',
         'img/blue_112.png',
         'img/blue_113.png',
-        'img/blue_110.png',
-        'img/blue_112.png',
-        'img/blue_113.png',  
-        'img/blue_114.png', 
-        'img/blue_115.png', 
-        'img/blue_116.png', 
+        'img/blue_114.png',
+        'img/blue_115.png',
+        'img/blue_116.png',  
         'img/blue_117.png', 
-        'img/blue_118.png'  
+        'img/blue_118.png' 
     ];
