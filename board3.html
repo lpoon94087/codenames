@@ -117,12 +117,33 @@
         let redImages = ["img/red.png"];
         let blueImages = ["img/blue.png"];
         let greyImages = ["img/grey.png"];
-        let blackImage = ["img/black.png"];
+        let blackImages = ["img/black.png"];
     </script>
     <!-- Load the wordlist -->
     <script src="data.js"></script>
 
     <script>
+        // Load images, per color, if they exists
+        function loadCustomImagesColor(color, imgset, colorImages) {
+            let images = [];
+            for (let i = 0; i < 20; i++) {
+                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
+                console.log("testImage = ", testImage);
+                if (validUrl(testImage)) {
+                    images.push(testImage);
+                }
+            }
+            if (images.length > 0) {
+                colorImages.length = 0;
+                colorImages.push(images);
+            }
+        }
+        function loadCustomImages(imgset) {
+            loadCustomImagesColor("red", imgset, redImages);  
+            loadCustomImagesColor("blue", imgset, bluemages);  
+            loadCustomImagesColor("grey", imgset, greyImages);  
+            loadCustomImagesColor("black", imgset, blackImages);  
+        }
         const queryString = window.location.search;
         const params = new URLSearchParams(queryString);
         const addon = params.get('addon');
@@ -135,6 +156,12 @@
         }
         const imgset = params.get('imgset');
         console.log("imgset:", imgset);
+        if (imgset != null) {
+            // Load images if they exists
+            loadCustomImages(imgset);
+        }
+
+        // Create sample wordList if loading fails (eg. running html on editor)
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
@@ -146,11 +173,7 @@
             wordList.push(...sampleWords);
         }
         console.log('wordList:', wordList);
-    </script>
 
-    // Load custom images set (uses imgset parameter)
-    <script src="imagedata.js"></script>
-    <script>
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
