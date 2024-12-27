@@ -1,5 +1,5 @@
 // Default word list for Codenames
-const wordList = [ 
+const defaultWordList = [ 
     "AFRICA",
     "AGENT",
     "AIR",
@@ -401,3 +401,4 @@ const wordList = [
     "WORM",
     "YARD"
 ];  
+wordList.push(...defaultWordList);
