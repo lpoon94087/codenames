@@ -193,6 +193,7 @@
         shuffleArray(blueImages);
         let redImageIndex = 0;
         let blueImageIndex = 0;
+        let greyImageIndex = 0;
         
         selectedWords.forEach(word => {
             const wrapper = document.createElement('div');
@@ -236,10 +237,27 @@
                                 const redImage = redImages[redImageIndex++];
                                 card.style.backgroundImage = `url('${redImage}')`;
                             } else if (nextIndex === 3) { // Blue card
-                                if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
-                                const blueImage = blueImages[blueImageIndex++];
-                                card.style.backgroundImage = `url('${blueImage}')`;
                             }
+                            switch(nextIndex) {
+                                case 1: // Grey card
+                                    if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
+                                    const greyImage = greyImages[greyImageIndex++];
+                                    card.style.backgroundImage = `url('${greyImage}')`;
+                                    break;
+                                case 2: // Red card
+                                    if (redImageIndex >= redImages.length) { redImageIndex = 0; }
+                                    const redImage = redImages[redImageIndex++];
+                                    card.style.backgroundImage = `url('${redImage}')`;
+                                    break;
+                                case 3: // Blue card
+                                    if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
+                                    const blueImage = blueImages[blueImageIndex++];
+                                    card.style.backgroundImage = `url('${blueImage}')`;
+                                    break;
+                                case 4: // Black card
+                                   const blackImage = blackImages[0];
+                                   card.style.backgroundImage = `url('${blackImage}')`;
+                                 break;
                         }, 4000);
                     }
                 }, 300);
