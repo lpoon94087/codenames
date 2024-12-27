@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Board</title>
+    <style>
+       body {
+            background-color: #2e1810;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            perspective: 1000px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            padding: 20px;
+            max-width: 1000px;
+        }
+
+        .card-wrapper {
+            position: relative;
+            border: 3px solid #473831;
+            border-radius: 12px;
+            padding: 8px;
+            background-color: #3a2a22;
+        }
+
+        .card {
+            background-color: #d2b48c;
+            border: none;
+            border-radius: 8px;
+            padding: 30px 15px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            min-width: 160px;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            margin: 0;
+        }
+
+        .card.revealed {
+            color: transparent;
+        }
+
+        .card.revealed.color-2 { /* Red image */
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-2::after { /* Red Overlay*/
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .card.revealed.color-3 { /* Blue image*/
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-3::after { /* Blue overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 255, 0.5);
+            pointer-events: none;
+        }
+
+        .card.flipping {
+            animation: flip 0.6s ease-in-out;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0); }
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card.color-0 { background-color: #d2b48c; } /* tan */
+        .card.color-1 { background-color: #999999; } /* grey */
+        .card.color-2 { background-color: #d44d4d; } /* red */
+        .card.color-3 { background-color: #4d7bd4; } /* blue */
+        .card.color-4 { background-color: #222222; } /* black */
+    </style>
+</head>
+<body>
+    <div class="board" id="wordBoard"></div>
+
+    <!-- Load the external data file first -->
+    <script src="data.js"></script>
+    <script src="imagedata.js"></script>
+
+    <script>
+        const queryString = window.location.search;
+        const params = new URLSearchParams(queryString);
+        const addon = params.get('addon');
+        if (addon === null) {
+            console.log('No addon');
+        } else {
+            console.log('Using addon:', addon);
+            const moreWords = addon.split(",");
+            wordList.push(...moreWords);
+        }
+        if (wordList.length < 25) {
+            const sampleWords = [
+                'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
+                'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
+                'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
+                'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
+                'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
+            ];
+            wordList.push(...sampleWords);
+        }
+        console.log('wordList:', wordList);
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+        
+        function getRandomItems(arr, count) {
+            const shuffled = [...arr];
+            shuffleArray(shuffled);
+            return shuffled.slice(0, count);
+        }
+
+        const selectedWords = getRandomItems(wordList, 25);
+        const board = document.getElementById('wordBoard');
+        shuffleArray(redImages);
+        shuffleArray(blueImages);
+        let redImageIndex = 0;
+        let blueImageIndex = 0;
+        
+        selectedWords.forEach(word => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'card-wrapper';
+
+            const card = document.createElement('div');
+            card.className = 'card color-0';
+            card.textContent = word;
+            card.dataset.colorIndex = '0';
+
+            card.addEventListener('click', (e) => {
+                if (card.classList.contains('flipping')) return;
+
+                card.classList.add('flipping');
+
+                setTimeout(() => {
+                    const currentIndex = parseInt(card.dataset.colorIndex);
+                    const nextIndex = (currentIndex + 1) % 5;
+                    card.dataset.colorIndex = nextIndex;
+
+                    card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
+                    card.classList.add(`color-${nextIndex}`);
+
+                    // If the card becomes red or blue, start the reveal timer
+                    if (nextIndex === 2 || nextIndex === 3) {
+                        setTimeout(() => {
+                            card.classList.add('revealed');
+                            if (nextIndex === 2) { // Red card
+                                if (redImageIndex >= redImages.length) { redImageIndex = 0; }
+                                const redImage = redImages[redImageIndex++];
+                                card.style.backgroundImage = `url('${redImage}')`;
+                            } else if (nextIndex === 3) { // Blue card
+                                if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
+                                const blueImage = blueImages[blueImageIndex++];
+                                card.style.backgroundImage = `url('${blueImage}')`;
+                            }
+                        }, 4000);
+                    } else {
+                        // Remove revealed class and background image if card is no longer red or blue
+                        card.classList.remove('revealed');
+                        card.style.backgroundImage = '';
+                    }
+                }, 300);
+
+                setTimeout(() => {
+                    card.classList.remove('flipping');
+                }, 600);
+            });
+
+            wrapper.appendChild(card);
+            board.appendChild(wrapper);
+        });
+    </script>
+</body>
+</html>
