@@ -167,9 +167,20 @@
             card.className = 'card color-0';
             card.textContent = word;
             card.dataset.colorIndex = '0';
+            let revealTimer = null;
 
             card.addEventListener('click', (e) => {
                 if (card.classList.contains('flipping')) return;
+
+                // Clear any pending reveal timer
+                if (revealTimer) {
+                    clearTimeout(revealTimer);
+                    revealTimer = null;
+                }
+
+                // Remove revealed state and image immediately on any click
+                card.classList.remove('revealed');
+                card.style.backgroundImage = '';
 
                 card.classList.add('flipping');
 
@@ -183,7 +194,7 @@
 
                     // If the card becomes red or blue, start the reveal timer
                     if (nextIndex === 2 || nextIndex === 3) {
-                        setTimeout(() => {
+                        revealTimer = setTimeout(() => {
                             card.classList.add('revealed');
                             if (nextIndex === 2) { // Red card
                                 if (redImageIndex >= redImages.length) { redImageIndex = 0; }
@@ -195,10 +206,6 @@
                                 card.style.backgroundImage = `url('${blueImage}')`;
                             }
                         }, 4000);
-                    } else {
-                        // Remove revealed class and background image if card is no longer red or blue
-                        card.classList.remove('revealed');
-                        card.style.backgroundImage = '';
                     }
                 }, 300);
 
