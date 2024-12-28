@@ -23,6 +23,7 @@
             gap: 12px;
             padding: 20px;
             max-width: 1000px;
+            width: 100%;
         }
 
         .card-wrapper {
@@ -31,7 +32,15 @@
             border-radius: 12px;
             padding: 8px;
             background-color: #3a2a22;
-            aspect-ratio: 5/3;  /* Changed to match original 5:3 ratio */
+            min-width: 160px;  /* Added minimum width */
+            width: 100%;
+        }
+
+        /* This maintains the 5:3 aspect ratio */
+        .card-wrapper::before {
+            content: '';
+            display: block;
+            padding-top: 60%; /* 3/5 = 0.6 = 60% */
         }
 
         .card {
@@ -42,7 +51,11 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            position: relative;
+            position: absolute;
+            top: 8px;  /* Match padding of wrapper */
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.6s;
             transform-style: preserve-3d;
@@ -50,8 +63,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 100%;
         }
 
         .card-text {
@@ -174,9 +185,9 @@
     <script src="data.js"></script>
 
     <script>
-        function loadCustomImagesColor(color, imgset, colorImages, count) {
+        function loadCustomImagesColor(color, imgset, colorImages) {
             let images = [];
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < 20; i++) {
                 const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
                 images.push(testImage);
             }
@@ -186,10 +197,10 @@
             }
         }
         function loadCustomImages(imgset) {
-            loadCustomImagesColor("red", imgset, redImages, 20);  
-            loadCustomImagesColor("blue", imgset, blueImages, 20);  
-            loadCustomImagesColor("grey", imgset, greyImages, 5);  
-            loadCustomImagesColor("black", imgset, blackImages, 1);  
+            loadCustomImagesColor("red", imgset, redImages);  
+            loadCustomImagesColor("blue", imgset, blueImages);  
+            loadCustomImagesColor("grey", imgset, greyImages);  
+            loadCustomImagesColor("black", imgset, blackImages);  
         }
         const queryString = window.location.search;
         const params = new URLSearchParams(queryString);
