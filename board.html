@@ -31,37 +31,52 @@
             border-radius: 12px;
             padding: 8px;
             background-color: #3a2a22;
+            aspect-ratio: 5/3;  /* Changed to match original 5:3 ratio */
         }
 
         .card {
             background-color: #d2b48c;
             border: none;
             border-radius: 8px;
-            padding: 30px 15px;
             cursor: pointer;
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            color: white;
-            min-width: 160px;
             position: relative;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.6s;
             transform-style: preserve-3d;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-text {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .card.revealed {
             color: transparent;
         }
 
-        .card.revealed.color-2 { /* Red image */
+        .card.revealed .card-text {
+            display: none;
+        }
+
+        .card.revealed.color-2 {
             background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
-        .card.revealed.color-2::after { /* Red Overlay*/
+        .card.revealed.color-2::after {
             content: '';
             position: absolute;
             top: 0;
@@ -70,15 +85,16 @@
             height: 100%;
             background-color: rgba(255, 0, 0, 0.5);
             pointer-events: none;
+            border-radius: 8px;
         }
 
-        .card.revealed.color-3 { /* Blue image*/
+        .card.revealed.color-3 {
             background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
-        .card.revealed.color-3::after { /* Blue overlay */
+        .card.revealed.color-3::after {
             content: '';
             position: absolute;
             top: 0;
@@ -87,15 +103,16 @@
             height: 100%;
             background-color: rgba(0, 0, 255, 0.5);
             pointer-events: none;
+            border-radius: 8px;
         }
 
-        .card.revealed.color-1 { /* Grey image */
+        .card.revealed.color-1 {
             background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
-        .card.revealed.color-1::after { /* Grey Overlay*/
+        .card.revealed.color-1::after {
             content: '';
             position: absolute;
             top: 0;
@@ -103,15 +120,16 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            border-radius: 8px;
         }
 
-        .card.revealed.color-4 { /* Black image*/
+        .card.revealed.color-4 {
             background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
-        .card.revealed.color-4::after { /* Black overlay */
+        .card.revealed.color-4::after {
             content: '';
             position: absolute;
             top: 0;
@@ -119,6 +137,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            border-radius: 8px;
         }
 
         .card.flipping {
@@ -135,11 +154,11 @@
             transform: translateY(-2px);
         }
 
-        .card.color-0 { background-color: #d2b48c; } /* tan */
-        .card.color-1 { background-color: #999999; } /* grey */
-        .card.color-2 { background-color: #d44d4d; } /* red */
-        .card.color-3 { background-color: #4d7bd4; } /* blue */
-        .card.color-4 { background-color: #222222; } /* black */
+        .card.color-0 { background-color: #d2b48c; }
+        .card.color-1 { background-color: #999999; }
+        .card.color-2 { background-color: #d44d4d; }
+        .card.color-3 { background-color: #4d7bd4; }
+        .card.color-4 { background-color: #222222; }
     </style>
 </head>
 <body>
@@ -152,11 +171,9 @@
         let greyImages = ["img/grey_0.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
         let blackImages = ["img/black.png"];
     </script>
-    <!-- Load the wordlist -->
     <script src="data.js"></script>
 
     <script>
-        // Load images, per color, if they exists
         function loadCustomImagesColor(color, imgset, colorImages) {
             let images = [];
             for (let i = 0; i < 20; i++) {
@@ -187,11 +204,9 @@
         const imgset = params.get('imgset');
         console.log("imgset:", imgset);
         if (imgset != null) {
-            // Load images if they exists
             loadCustomImages(imgset);
         }
 
-        // Create sample wordList if loading fails (eg. running html on editor)
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
@@ -202,10 +217,6 @@
             ];
             wordList.push(...sampleWords);
         }
-        console.log('wordList:', wordList);
-        console.log('greyImages:', greyImages);
-        console.log('redImages:', redImages);
-        console.log('blueImages:', blueImages);
 
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -234,20 +245,23 @@
 
             const card = document.createElement('div');
             card.className = 'card color-0';
-            card.textContent = word;
             card.dataset.colorIndex = '0';
+            
+            const textSpan = document.createElement('span');
+            textSpan.className = 'card-text';
+            textSpan.textContent = word;
+            card.appendChild(textSpan);
+            
             let revealTimer = null;
 
             card.addEventListener('click', (e) => {
                 if (card.classList.contains('flipping')) return;
 
-                // Clear any pending reveal timer
                 if (revealTimer) {
                     clearTimeout(revealTimer);
                     revealTimer = null;
                 }
 
-                // Remove revealed state and image immediately on any click
                 card.classList.remove('revealed');
                 card.style.backgroundImage = '';
 
@@ -261,30 +275,29 @@
                     card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
                     card.classList.add(`color-${nextIndex}`);
 
-                    // If the card becomes red, blue, grey or black start the reveal timer
                     if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
                         revealTimer = setTimeout(() => {
                             card.classList.add('revealed');
                             switch(nextIndex) {
-                                case 1: // Grey card
+                                case 1:
                                     if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
                                     const greyImage = greyImages[greyImageIndex++];
                                     card.style.backgroundImage = `url('${greyImage}')`;
                                     break;
-                                case 2: // Red card
+                                case 2:
                                     if (redImageIndex >= redImages.length) { redImageIndex = 0; }
                                     const redImage = redImages[redImageIndex++];
                                     card.style.backgroundImage = `url('${redImage}')`;
                                     break;
-                                case 3: // Blue card
+                                case 3:
                                     if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
                                     const blueImage = blueImages[blueImageIndex++];
                                     card.style.backgroundImage = `url('${blueImage}')`;
                                     break;
-                                case 4: // Black card
+                                case 4:
                                    const blackImage = blackImages[0];
                                    card.style.backgroundImage = `url('${blackImage}')`;
-                                 break;
+                                    break;
                             }
                         }, 4000);
                     }
