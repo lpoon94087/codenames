@@ -174,9 +174,9 @@
     <script src="data.js"></script>
 
     <script>
-        function loadCustomImagesColor(color, imgset, colorImages) {
+        function loadCustomImagesColor(color, imgset, colorImages, count) {
             let images = [];
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < count; i++) {
                 const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
                 images.push(testImage);
             }
@@ -186,10 +186,10 @@
             }
         }
         function loadCustomImages(imgset) {
-            loadCustomImagesColor("red", imgset, redImages);  
-            loadCustomImagesColor("blue", imgset, blueImages);  
-            loadCustomImagesColor("grey", imgset, greyImages);  
-            loadCustomImagesColor("black", imgset, blackImages);  
+            loadCustomImagesColor("red", imgset, redImages, 20);  
+            loadCustomImagesColor("blue", imgset, blueImages, 20);  
+            loadCustomImagesColor("grey", imgset, greyImages, 5);  
+            loadCustomImagesColor("black", imgset, blackImages, 1);  
         }
         const queryString = window.location.search;
         const params = new URLSearchParams(queryString);
