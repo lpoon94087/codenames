@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Board</title>
@@ -41,72 +42,97 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            color: white;
             min-width: 160px;
             position: relative;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.6s;
             transform-style: preserve-3d;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .card.locked {
+
+        .card-text {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.revealed {
             color: transparent;
         }
 
-        .card.locked.color-2 { /* Red image */
+        .card.revealed .card-text {
+            display: none;
+        }
+
+        .card.revealed.color-2 {
             background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
-        .card.locked.color-2::after { /* Red Overlay*/
+        .card.revealed.color-2::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 0, 0, 0.5); /* 50% transparent red */
+            background-color: rgba(255, 0, 0, 0.5);
             pointer-events: none;
         }
 
-        .card.locked.color-3 { /* Blue image*/
+        .card.revealed.color-3 {
             background-image: url('img/laurie_200.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
-        .card.locked.color-3::after { /* Blue overlay */
+        .card.revealed.color-3::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 255, 0.5); /* Blue with 50% transparency */
-            pointer-events: none; /* Makes the overlay non-interactive */
+            background-color: rgba(0, 0, 255, 0.5);
+            pointer-events: none;
         }
 
-        .lock-indicator {
+        .card.revealed.color-1 {
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card.revealed.color-1::after {
+            content: '';
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            z-index: 2;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
-        .lock-indicator::before {
-            content: '🔒';
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            color: white;
+        .card.revealed.color-4 {
+            background-image: url('img/laurie_200.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
-
-        .card.locked .lock-indicator::before {
-            opacity: 1;
+        .card.revealed.color-4::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
         .card.flipping {
@@ -123,27 +149,45 @@
             transform: translateY(-2px);
         }
 
-        .card.color-0 { background-color: #d2b48c; } /* tan */
-        .card.color-1 { background-color: #999999; } /* grey */
-        .card.color-2 { background-color: #d44d4d; } /* red */
-        .card.color-3 { background-color: #4d7bd4; } /* blue */
-        .card.color-4 { background-color: #222222; } /* black */
+        .card.color-0 { background-color: #d2b48c; }
+        .card.color-1 { background-color: #999999; }
+        .card.color-2 { background-color: #d44d4d; }
+        .card.color-3 { background-color: #4d7bd4; }
+        .card.color-4 { background-color: #222222; }
     </style>
 </head>
 <body>
     <div class="board" id="wordBoard"></div>
 
-    <!-- Load the external data file first -->
+    <script>
+        let wordList = []; 
+        let redImages = ["img/red_0.png", "img/red_1.png", "img/red_2.png", "img/red_3.png", "img/red_4.png", "img/red_5.png", "img/red_6.png"];
+        let blueImages = ["img/blue_0.png", "img/blue_1.png", "img/blue_2.png", "img/blue_3.png", "img/blue_4.png", "img/blue_5.png", "img/blue_6.png"];
+        let greyImages = ["img/grey_0.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
+        let blackImages = ["img/black.png"];
+    </script>
     <script src="data.js"></script>
-    <script src="imagedata.js"></script>
 
     <script>
-        // Get the query string (everything after ?)
+        function loadCustomImagesColor(color, imgset, colorImages) {
+            let images = [];
+            for (let i = 0; i < 20; i++) {
+                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
+                images.push(testImage);
+            }
+            if (images.length > 0) {
+                colorImages.length = 0;
+                colorImages.push(...images);
+            }
+        }
+        function loadCustomImages(imgset) {
+            loadCustomImagesColor("red", imgset, redImages);  
+            loadCustomImagesColor("blue", imgset, blueImages);  
+            loadCustomImagesColor("grey", imgset, greyImages);  
+            loadCustomImagesColor("black", imgset, blackImages);  
+        }
         const queryString = window.location.search;
-        // Create a URLSearchParams object
         const params = new URLSearchParams(queryString);
-        // Access specific parameters.
-        // addon is an addition lists of words to add, eg. ?addon="LAURIE,SU"
         const addon = params.get('addon');
         if (addon === null) {
             console.log('No addon');
@@ -152,6 +196,12 @@
             const moreWords = addon.split(",");
             wordList.push(...moreWords);
         }
+        const imgset = params.get('imgset');
+        console.log("imgset:", imgset);
+        if (imgset != null) {
+            loadCustomImages(imgset);
+        }
+
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
@@ -162,30 +212,27 @@
             ];
             wordList.push(...sampleWords);
         }
-        console.log('wordList:', wordList);
 
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
-                [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
         }
         
-        // Function to get random items from array
         function getRandomItems(arr, count) {
-            const shuffled = [...arr]; // Clone the array to avoid modifying the original
+            const shuffled = [...arr];
             shuffleArray(shuffled);
-            return shuffled.slice(0, count); // Return the first `count` items
+            return shuffled.slice(0, count);
         }
 
         const selectedWords = getRandomItems(wordList, 25);
         const board = document.getElementById('wordBoard');
-        // Shuffle images
         shuffleArray(redImages);
         shuffleArray(blueImages);
-        redImageIndex = 0;
-        blueImageIndex = 0;
-        console.log('redImages:', redImages);
+        let redImageIndex = 0;
+        let blueImageIndex = 0;
+        let greyImageIndex = 0;
         
         selectedWords.forEach(word => {
             const wrapper = document.createElement('div');
@@ -193,31 +240,25 @@
 
             const card = document.createElement('div');
             card.className = 'card color-0';
-            card.textContent = word;
             card.dataset.colorIndex = '0';
-
-            const lockIndicator = document.createElement('div');
-            lockIndicator.className = 'lock-indicator';
-            card.appendChild(lockIndicator);
+            
+            const textSpan = document.createElement('span');
+            textSpan.className = 'card-text';
+            textSpan.textContent = word;
+            card.appendChild(textSpan);
+            
+            let revealTimer = null;
 
             card.addEventListener('click', (e) => {
-                if (e.target === lockIndicator) {
-                    card.classList.toggle('locked');
-                    if (card.classList.contains('locked') && card.classList.contains('color-2')) {
-                        if (redImageIndex > redImages.length-1) { redImageIndex = 0; }
-                        const redImage = redImages[redImageIndex++];
-                        card.style.backgroundImage = `url('${redImage}')`;
-                    }
-                    if (card.classList.contains('locked') && card.classList.contains('color-3')) {
-                        if (blueImageIndex > blueImages.length-1) { blueImageIndex = 0; }
-                        const blueImage = blueImages[blueImageIndex++];
-                        card.style.backgroundImage = `url('${blueImage}')`;
-                    }
-                    return;
+                if (card.classList.contains('flipping')) return;
+
+                if (revealTimer) {
+                    clearTimeout(revealTimer);
+                    revealTimer = null;
                 }
 
-                if (card.classList.contains('locked') || 
-                    card.classList.contains('flipping')) return;
+                card.classList.remove('revealed');
+                card.style.backgroundImage = '';
 
                 card.classList.add('flipping');
 
@@ -228,6 +269,33 @@
 
                     card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
                     card.classList.add(`color-${nextIndex}`);
+
+                    if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
+                        revealTimer = setTimeout(() => {
+                            card.classList.add('revealed');
+                            switch(nextIndex) {
+                                case 1:
+                                    if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
+                                    const greyImage = greyImages[greyImageIndex++];
+                                    card.style.backgroundImage = `url('${greyImage}')`;
+                                    break;
+                                case 2:
+                                    if (redImageIndex >= redImages.length) { redImageIndex = 0; }
+                                    const redImage = redImages[redImageIndex++];
+                                    card.style.backgroundImage = `url('${redImage}')`;
+                                    break;
+                                case 3:
+                                    if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
+                                    const blueImage = blueImages[blueImageIndex++];
+                                    card.style.backgroundImage = `url('${blueImage}')`;
+                                    break;
+                                case 4:
+                                   const blackImage = blackImages[0];
+                                   card.style.backgroundImage = `url('${blackImage}')`;
+                                    break;
+                            }
+                        }, 4000);
+                    }
                 }, 300);
 
                 setTimeout(() => {
