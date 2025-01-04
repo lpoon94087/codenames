@@ -247,7 +247,7 @@
             // Add background layer
             const backgroundLayer = document.createElement('div');
             backgroundLayer.className = 'card-background';
-            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
+            //backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
             
             // Add foreground layer
             const foregroundLayer = document.createElement('div');
@@ -295,14 +295,17 @@
                             switch(nextIndex) {
                                 case 1:
                                     if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
+                                    backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
                                     foregroundLayer.style.backgroundImage = `url('${greyImages[greyImageIndex++]}')`;
                                     break;
                                 case 2:
                                     if (redImageIndex >= redImages.length) { redImageIndex = 0; }
+                                    backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
                                     foregroundLayer.style.backgroundImage = `url('${redImages[redImageIndex++]}')`;
                                     break;
                                 case 3:
                                     if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
+                                    backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
                                     foregroundLayer.style.backgroundImage = `url('${blueImages[blueImageIndex++]}')`;
                                     break;
                                 case 4:
