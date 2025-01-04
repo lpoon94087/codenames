@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Board</title>
     <style>
-       body {
+        /* ... (keeping existing body and board styles) ... */
+        body {
             background-color: #2e1810;
             display: flex;
             justify-content: center;
@@ -23,6 +24,7 @@
             gap: 12px;
             padding: 20px;
             max-width: 1000px;
+            width: 100%;
         }
 
         .card-wrapper {
@@ -31,7 +33,14 @@
             border-radius: 12px;
             padding: 8px;
             background-color: #3a2a22;
-            aspect-ratio: 2/1;  /* Changed to match original 2:1 ratio */
+            min-width: 160px;
+            width: 100%;
+        }
+
+        .card-wrapper::before {
+            content: '';
+            display: block;
+            padding-top: 60%;
         }
 
         .card {
@@ -42,7 +51,11 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            position: relative;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.6s;
             transform-style: preserve-3d;
@@ -50,8 +63,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 100%;
+            overflow: hidden;
         }
 
         .card-text {
@@ -60,86 +72,69 @@
             border-radius: 4px;
             color: #000;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 3;
         }
 
-        .card.revealed {
-            color: transparent;
+        .card-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+
+        .card-foreground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .card.revealed .card-text {
             display: none;
         }
 
-        .card.revealed.color-2 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        .card.revealed .card-foreground {
+            opacity: 1;
         }
-        .card.revealed.color-2::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+
+        .card.revealed .card-overlay {
+            opacity: 0.5;
+        }
+
+        .card.revealed.color-2 .card-overlay {
             background-color: rgba(255, 0, 0, 0.5);
-            pointer-events: none;
-            border-radius: 8px;
         }
 
-        .card.revealed.color-3 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.revealed.color-3::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .card.revealed.color-3 .card-overlay {
             background-color: rgba(0, 0, 255, 0.5);
-            pointer-events: none;
-            border-radius: 8px;
         }
 
-        .card.revealed.color-1 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.revealed.color-1::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            border-radius: 8px;
-        }
-
-        .card.revealed.color-4 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.revealed.color-4::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            border-radius: 8px;
-        }
-
+        /* ... (keeping existing animation and hover styles) ... */
         .card.flipping {
             animation: flip 0.6s ease-in-out;
         }
@@ -166,71 +161,15 @@
 
     <script>
         let wordList = []; 
-        let redImages = ["img/red_0.png", "img/red_1.png", "img/red_2.png", "img/red_3.png", "img/red_4.png", "img/red_5.png", "img/red_6.png"];
-        let blueImages = ["img/blue_0.png", "img/blue_1.png", "img/blue_2.png", "img/blue_3.png", "img/blue_4.png", "img/blue_5.png", "img/blue_6.png"];
-        let greyImages = ["img/grey_0.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
+        let redImages = ["img/spy.png", "img/red_1.png", "img/red_2.png", "img/red_3.png", "img/red_4.png", "img/red_5.png", "img/red_6.png"];
+        let blueImages = ["img/spy.png", "img/blue_1.png", "img/blue_2.png", "img/blue_3.png", "img/blue_4.png", "img/blue_5.png", "img/blue_6.png"];
+        let greyImages = ["img/spy.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
         let blackImages = ["img/black.png"];
-    </script>
-    <script src="data.js"></script>
-
-    <script>
-        function loadCustomImagesColor(color, imgset, colorImages) {
-            let images = [];
-            for (let i = 0; i < 20; i++) {
-                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
-                images.push(testImage);
-            }
-            if (images.length > 0) {
-                colorImages.length = 0;
-                colorImages.push(...images);
-            }
-        }
-        function loadCustomImages(imgset) {
-            loadCustomImagesColor("red", imgset, redImages);  
-            loadCustomImagesColor("blue", imgset, blueImages);  
-            loadCustomImagesColor("grey", imgset, greyImages);  
-            loadCustomImagesColor("black", imgset, blackImages);  
-        }
-        const queryString = window.location.search;
-        const params = new URLSearchParams(queryString);
-        const addon = params.get('addon');
-        if (addon === null) {
-            console.log('No addon');
-        } else {
-            console.log('Using addon:', addon);
-            const moreWords = addon.split(",");
-            wordList.push(...moreWords);
-        }
-        const imgset = params.get('imgset');
-        console.log("imgset:", imgset);
-        if (imgset != null) {
-            loadCustomImages(imgset);
-        }
-
-        if (wordList.length < 25) {
-            const sampleWords = [
-                'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
-                'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
-                'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
-                'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
-                'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
-            ];
-            wordList.push(...sampleWords);
-        }
-
-        function shuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-        }
         
-        function getRandomItems(arr, count) {
-            const shuffled = [...arr];
-            shuffleArray(shuffled);
-            return shuffled.slice(0, count);
-        }
+        // Add background image URL - replace with your actual background image
+        const backgroundImage = 'img/grey_bg.png';
 
+        // Select words and initialize board
         const selectedWords = getRandomItems(wordList, 25);
         const board = document.getElementById('wordBoard');
         shuffleArray(redImages);
@@ -247,9 +186,27 @@
             card.className = 'card color-0';
             card.dataset.colorIndex = '0';
             
+            // Add background layer
+            const backgroundLayer = document.createElement('div');
+            backgroundLayer.className = 'card-background';
+            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
+            
+            // Add foreground layer
+            const foregroundLayer = document.createElement('div');
+            foregroundLayer.className = 'card-foreground';
+            
+            // Add overlay layer
+            const overlayLayer = document.createElement('div');
+            overlayLayer.className = 'card-overlay';
+            
             const textSpan = document.createElement('span');
             textSpan.className = 'card-text';
             textSpan.textContent = word;
+            
+            // Append layers in correct order
+            card.appendChild(backgroundLayer);
+            card.appendChild(foregroundLayer);
+            card.appendChild(overlayLayer);
             card.appendChild(textSpan);
             
             let revealTimer = null;
@@ -263,7 +220,6 @@
                 }
 
                 card.classList.remove('revealed');
-                card.style.backgroundImage = '';
 
                 card.classList.add('flipping');
 
@@ -281,22 +237,18 @@
                             switch(nextIndex) {
                                 case 1:
                                     if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
-                                    const greyImage = greyImages[greyImageIndex++];
-                                    card.style.backgroundImage = `url('${greyImage}')`;
+                                    foregroundLayer.style.backgroundImage = `url('${greyImages[greyImageIndex++]}')`;
                                     break;
                                 case 2:
                                     if (redImageIndex >= redImages.length) { redImageIndex = 0; }
-                                    const redImage = redImages[redImageIndex++];
-                                    card.style.backgroundImage = `url('${redImage}')`;
+                                    foregroundLayer.style.backgroundImage = `url('${redImages[redImageIndex++]}')`;
                                     break;
                                 case 3:
                                     if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
-                                    const blueImage = blueImages[blueImageIndex++];
-                                    card.style.backgroundImage = `url('${blueImage}')`;
+                                    foregroundLayer.style.backgroundImage = `url('${blueImages[blueImageIndex++]}')`;
                                     break;
                                 case 4:
-                                   const blackImage = blackImages[0];
-                                   card.style.backgroundImage = `url('${blackImage}')`;
+                                    foregroundLayer.style.backgroundImage = `url('${blackImages[0]}')`;
                                     break;
                             }
                         }, 4000);
