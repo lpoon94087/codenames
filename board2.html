@@ -165,7 +165,65 @@
         let blueImages = ["img/spy.png", "img/blue_1.png", "img/blue_2.png", "img/blue_3.png", "img/blue_4.png", "img/blue_5.png", "img/blue_6.png"];
         let greyImages = ["img/spy.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
         let blackImages = ["img/black.png"];
-        
+    </script>
+    <script src="data.js"></script>
+    
+    <script>
+        function loadCustomImagesColor(color, imgset, colorImages) {
+            let images = [];
+            for (let i = 0; i < 20; i++) {
+                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
+                images.push(testImage);
+            }
+            if (images.length > 0) {
+                colorImages.length = 0;
+                colorImages.push(...images);
+            }
+        }
+        function loadCustomImages(imgset) {
+            loadCustomImagesColor("red", imgset, redImages);  
+            loadCustomImagesColor("blue", imgset, blueImages);  
+            loadCustomImagesColor("grey", imgset, greyImages);  
+            loadCustomImagesColor("black", imgset, blackImages);  
+        }
+        const queryString = window.location.search;
+        const params = new URLSearchParams(queryString);
+        const addon = params.get('addon');
+        if (addon === null) {
+            console.log('No addon');
+        } else {
+            console.log('Using addon:', addon);
+            const moreWords = addon.split(",");
+            wordList.push(...moreWords);
+        }
+        const imgset = params.get('imgset');
+        console.log("imgset:", imgset);
+        if (imgset != null) {
+            loadCustomImages(imgset);
+        }
+        if (wordList.length < 25) {
+            const sampleWords = [
+                'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
+                'PEGASUS', 'FROG', 'COCONUT', 'SHED', 'MISS',
+                'ASH', 'SMUGGLER', 'GANGSTER', 'SATELLITE', 'PARK',
+                'MINE', 'RECORD', 'GLOBE', 'PALM', 'KING',
+                'ARMOR', 'BRIDE', 'SQUIRREL', 'GLASSES', 'CROW'
+            ];
+            wordList.push(...sampleWords);
+        }
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        function getRandomItems(arr, count) {
+            const shuffled = [...arr];
+            shuffleArray(shuffled);
+            return shuffled.slice(0, count);
+        }
+
         // Add background image URL - replace with your actual background image
         const backgroundImage = 'img/grey_bg.png';
 
