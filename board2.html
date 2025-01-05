@@ -200,7 +200,7 @@
             return images;
         }
 
-        function loadAllImages(imgset) {
+        async function loadAllImages(imgset) {
             agentImages = await loadImages(imgset, "agent");
             agentBgImages = await loadImages(imgset, "agentbg");
             bystanderImages = await loadImages(imgset, "bystander");
