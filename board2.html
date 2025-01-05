@@ -161,31 +161,53 @@
 
     <script>
         let wordList = []; 
-        let redImages = ["img/spy.png", "img/red_1.png", "img/red_2.png", "img/red_3.png", "img/red_4.png", "img/red_5.png", "img/red_6.png"];
-        let blueImages = ["img/spy.png", "img/blue_1.png", "img/blue_2.png", "img/blue_3.png", "img/blue_4.png", "img/blue_5.png", "img/blue_6.png"];
-        let greyImages = ["img/grey_fg.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
-        let blackImages = ["img/black.png"];
+        let agentImages = [];
+        let agentBgImages = [];
+        let bystanderImages = [];
+        let bystanderBgImages = [];
+        let blackImages = [];        
     </script>
     <script src="data.js"></script>
     
     <script>
-        function loadCustomImagesColor(color, imgset, colorImages) {
-            let images = [];
-            for (let i = 0; i < 20; i++) {
-                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
-                images.push(testImage);
-            }
-            if (images.length > 0) {
-                colorImages.length = 0;
-                colorImages.push(...images);
-            }
+        // Function to preload and verify images exist
+        async function preloadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(url);
+                img.onerror = () => reject(url);
+                img.src = url;
+            });
         }
-        function loadCustomImages(imgset) {
-            loadCustomImagesColor("red", imgset, redImages);  
-            loadCustomImagesColor("blue", imgset, blueImages);  
-            loadCustomImagesColor("grey", imgset, greyImages);  
-            loadCustomImagesColor("black", imgset, blackImages);  
+
+        // Function to load images for a specific type
+        async function loadColorImages(imgset, type, maxImages = 1000) {
+            const images = [];
+            const loadPromises = [];
+            
+            // Try loading images with index from 0 to maxImages
+            for (let i = 0; i < maxImages; i++) {
+                const imageUrl = `img/${imgset}/${type}_${i}.png`;
+                loadPromises.push(
+                    preloadImage(imageUrl)
+                        .then(url => images.push(url))
+                        .catch(() => {/* Image doesn't exist, ignore */})
+                );
+            }
+            
+            // Wait for all image load attempts to complete
+            await Promise.all(loadPromises);
+            return images;
         }
+
+        function loadAllImages(imgset) {
+            agentImages = await loadImages(imgset, "agent");
+            agentBgImages = await loadImages(imgset, "agentbg");
+            bystanderImages = await loadImages(imgset, "bystander");
+            bystanderBgImages = await loadImages(imgset, "bystanderbg");
+            blackImages = await loadImages(imgset, "black");
+        }
+        
         const queryString = window.location.search;
         const params = new URLSearchParams(queryString);
         const addon = params.get('addon');
@@ -196,10 +218,12 @@
             const moreWords = addon.split(",");
             wordList.push(...moreWords);
         }
-        const imgset = params.get('imgset');
+        let imgset = params.get('imgset');
         console.log("imgset:", imgset);
         if (imgset != null) {
             loadCustomImages(imgset);
+        } else {
+            imgset = "ba";
         }
         if (wordList.length < 25) {
             const sampleWords = [
@@ -224,106 +248,121 @@
             return shuffled.slice(0, count);
         }
 
-        // Add background image URL - replace with your actual background image
-        const backgroundImage = 'img/grey_bg.png';
-
-        // Select words and initialize board
-        const selectedWords = getRandomItems(wordList, 25);
-        const board = document.getElementById('wordBoard');
-        shuffleArray(redImages);
-        shuffleArray(blueImages);
-        let redImageIndex = 0;
-        let blueImageIndex = 0;
-        let greyImageIndex = 0;
+        async function initializeBoard() {
+            try {
+                // Load all the images first
+                loadAllImages(imgset);
+                console.log(`Loaded ${agentImages.length} agent images`);
+                console.log(`Loaded ${agentBgImages.length} agentbg images`);
+                console.log(`Loaded ${bystanderImages.length} bystander images`);
+                console.log(`Loaded ${bystanderBgImages.length} bystanderbg images`);
+                console.log(`Loaded ${blackImages.length} black images`);
+                
+                // Select words and initialize board
+                const selectedWords = getRandomItems(wordList, 25);
+                const board = document.getElementById('wordBoard');
+                shuffleArray(agentImages);
+                shuffleArray(agentBgImages);
+                shuffleArray(bystanderImages);
+                shuffleArray(bystanderBgImages);
+                let agentIndex = 0;
+                let agentBgIndex = 0;
+                let bystanderIndex = 0;
+                let bystanderBgIndex = 0;
+                
+                selectedWords.forEach(word => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'card-wrapper';
         
-        selectedWords.forEach(word => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'card-wrapper';
-
-            const card = document.createElement('div');
-            card.className = 'card color-0';
-            card.dataset.colorIndex = '0';
-            
-            // Add background layer
-            const backgroundLayer = document.createElement('div');
-            backgroundLayer.className = 'card-background';
-            //backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-            
-            // Add foreground layer
-            const foregroundLayer = document.createElement('div');
-            foregroundLayer.className = 'card-foreground';
-            
-            // Add overlay layer
-            const overlayLayer = document.createElement('div');
-            overlayLayer.className = 'card-overlay';
-            
-            const textSpan = document.createElement('span');
-            textSpan.className = 'card-text';
-            textSpan.textContent = word;
-            
-            // Append layers in correct order
-            card.appendChild(backgroundLayer);
-            card.appendChild(foregroundLayer);
-            card.appendChild(overlayLayer);
-            card.appendChild(textSpan);
-            
-            let revealTimer = null;
-
-            card.addEventListener('click', (e) => {
-                if (card.classList.contains('flipping')) return;
-
-                if (revealTimer) {
-                    clearTimeout(revealTimer);
-                    revealTimer = null;
-                }
-
-                card.classList.remove('revealed');
-
-                card.classList.add('flipping');
-
-                setTimeout(() => {
-                    const currentIndex = parseInt(card.dataset.colorIndex);
-                    const nextIndex = (currentIndex + 1) % 5;
-                    card.dataset.colorIndex = nextIndex;
-
-                    card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
-                    card.classList.add(`color-${nextIndex}`);
-
-                    if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
-                        revealTimer = setTimeout(() => {
-                            card.classList.add('revealed');
-                            switch(nextIndex) {
-                                case 1:
-                                    if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
-                                    backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-                                    foregroundLayer.style.backgroundImage = `url('${greyImages[greyImageIndex++]}')`;
-                                    break;
-                                case 2:
-                                    if (redImageIndex >= redImages.length) { redImageIndex = 0; }
-                                    backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-                                    foregroundLayer.style.backgroundImage = `url('${redImages[redImageIndex++]}')`;
-                                    break;
-                                case 3:
-                                    if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
-                                    backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-                                    foregroundLayer.style.backgroundImage = `url('${blueImages[blueImageIndex++]}')`;
-                                    break;
-                                case 4:
-                                    foregroundLayer.style.backgroundImage = `url('${blackImages[0]}')`;
-                                    break;
+                    const card = document.createElement('div');
+                    card.className = 'card color-0';
+                    card.dataset.colorIndex = '0';
+                    
+                    // Add background layer
+                    const backgroundLayer = document.createElement('div');
+                    backgroundLayer.className = 'card-background';
+                    //backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
+                    
+                    // Add foreground layer
+                    const foregroundLayer = document.createElement('div');
+                    foregroundLayer.className = 'card-foreground';
+                    
+                    // Add overlay layer
+                    const overlayLayer = document.createElement('div');
+                    overlayLayer.className = 'card-overlay';
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'card-text';
+                    textSpan.textContent = word;
+                    
+                    // Append layers in correct order
+                    card.appendChild(backgroundLayer);
+                    card.appendChild(foregroundLayer);
+                    card.appendChild(overlayLayer);
+                    card.appendChild(textSpan);
+                    
+                    let revealTimer = null;
+        
+                    card.addEventListener('click', (e) => {
+                        if (card.classList.contains('flipping')) return;
+        
+                        if (revealTimer) {
+                            clearTimeout(revealTimer);
+                            revealTimer = null;
+                        }
+        
+                        card.classList.remove('revealed');
+        
+                        card.classList.add('flipping');
+        
+                        setTimeout(() => {
+                            const currentIndex = parseInt(card.dataset.colorIndex);
+                            const nextIndex = (currentIndex + 1) % 5;
+                            card.dataset.colorIndex = nextIndex;
+        
+                            card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
+                            card.classList.add(`color-${nextIndex}`);
+        
+                            if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
+                                revealTimer = setTimeout(() => {
+                                    card.classList.add('revealed');
+                                    switch(nextIndex) {
+                                        case 1:
+                                            if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${greyImages[greyImageIndex++]}')`;
+                                            break;
+                                        case 2:
+                                            if (redImageIndex >= redImages.length) { redImageIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${redImages[redImageIndex++]}')`;
+                                            break;
+                                        case 3:
+                                            if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${blueImages[blueImageIndex++]}')`;
+                                            break;
+                                        case 4:
+                                            foregroundLayer.style.backgroundImage = `url('${blackImages[0]}')`;
+                                            break;
+                                    }
+                                }, 4000);
                             }
-                        }, 4000);
-                    }
-                }, 300);
-
-                setTimeout(() => {
-                    card.classList.remove('flipping');
-                }, 600);
-            });
-
-            wrapper.appendChild(card);
-            board.appendChild(wrapper);
-        });
+                        }, 300);
+        
+                        setTimeout(() => {
+                            card.classList.remove('flipping');
+                        }, 600);
+                    });
+        
+                    wrapper.appendChild(card);
+                    board.appendChild(wrapper);
+                });
+            } catch (error) {
+                console.error("Error initializing board", error);
+            }
+        }
+        initializeBoard();
     </script>
 </body>
 </html>
