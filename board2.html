@@ -181,7 +181,7 @@
         }
 
         // Function to load images for a specific type
-        async function loadImages(imgset, type, maxImages = 1000) {
+        async function loadImages(imgset, type, maxImages = 100) {
             const images = [];
             const loadPromises = [];
             
@@ -329,7 +329,7 @@
                                         case 1:
                                             if (bystanderIndex >= bystanderImages.length) { bystanderIndex = 0; }
                                             if (bystanderBgIndex >= bystanderBgImages.length) { bystanderBgIndex = 0; }
-                                            backgroundLayer.style.backgroundImage = `url('${bystanderByImages[bystanderBgIndex++]}')`;
+                                            backgroundLayer.style.backgroundImage = `url('${bystanderBgImages[bystanderBgIndex++]}')`;
                                             foregroundLayer.style.backgroundImage = `url('${bystanderImages[bystanderIndex++]}')`;
                                             break;
                                         case 2:
