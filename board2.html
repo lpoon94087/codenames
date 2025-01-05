@@ -321,6 +321,8 @@
         
                             card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
                             card.classList.add(`color-${nextIndex}`);
+                            backgroundLayer.style.backgroundImage = null;
+                            backgroundLayer.style.foregroundImage = null;
         
                             if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
                                 revealTimer = setTimeout(() => {
