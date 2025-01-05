@@ -251,7 +251,7 @@
         async function initializeBoard() {
             try {
                 // Load all the images first
-                loadAllImages(imgset);
+                await loadAllImages(imgset);
                 console.log(`Loaded ${agentImages.length} agent images`);
                 console.log(`Loaded ${agentBgImages.length} agentbg images`);
                 console.log(`Loaded ${bystanderImages.length} bystander images`);
