@@ -281,7 +281,6 @@
                     // Add background layer
                     const backgroundLayer = document.createElement('div');
                     backgroundLayer.className = 'card-background';
-                    //backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
                     
                     // Add foreground layer
                     const foregroundLayer = document.createElement('div');
@@ -328,19 +327,17 @@
                                     card.classList.add('revealed');
                                     switch(nextIndex) {
                                         case 1:
-                                            if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
-                                            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-                                            foregroundLayer.style.backgroundImage = `url('${greyImages[greyImageIndex++]}')`;
+                                            if (bystanderIndex >= bystanderImages.length) { bystanderIndex = 0; }
+                                            if (bystanderBgIndex >= bystanderBgImages.length) { bystanderBgIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${bystanderByImages[bystanderBgIndex++]}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${bystanderImages[bystanderIndex++]}')`;
                                             break;
                                         case 2:
-                                            if (redImageIndex >= redImages.length) { redImageIndex = 0; }
-                                            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-                                            foregroundLayer.style.backgroundImage = `url('${redImages[redImageIndex++]}')`;
-                                            break;
                                         case 3:
-                                            if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
-                                            backgroundLayer.style.backgroundImage = `url('${backgroundImage}')`;
-                                            foregroundLayer.style.backgroundImage = `url('${blueImages[blueImageIndex++]}')`;
+                                            if (agentIndex >= agentImages.length) { agentIndex = 0; }
+                                            if (agentBgIndex >= agentBgImages.length) { agentBgIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${agentBgImages[agentBgIndex++]}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${agentImages[agentIndex++]}')`;
                                             break;
                                         case 4:
                                             foregroundLayer.style.backgroundImage = `url('${blackImages[0]}')`;
