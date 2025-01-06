@@ -17,45 +17,6 @@
             perspective: 1000px;
         }
 
-        .container {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            max-width: 1200px;
-            width: 100%;
-            padding: 20px;
-        }
-        
-        .menu {
-            background-color: #3a2a22;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border: 3px solid #473831;
-        }
-
-        .menu-item {
-            width: 40px;
-            height: 40px;
-            background-color: #d2b48c;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #2e1810;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-2px);
-            background-color: #e3c5a8;
-        }
-
         .board {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -195,13 +156,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="menu">
-            <button class="menu-item" id="demoButton" title="Demo">▶️</button>
-            <button class="menu-item" title="Info">ℹ️</button>
-        </div>
-        <div class="board" id="wordBoard"></div>
-    </div>
+    <div class="board" id="wordBoard"></div>
 
     <script>
         let wordList = []; 
@@ -222,21 +177,18 @@
     <script>
         function startDemoMode() {
             if (demoInterval) return;
-            
             const cards = Array.from(document.querySelectorAll('.card'));
             const unrevealedCards = cards.filter(card => !card.classList.contains('revealed'));
 
             demoInterval = setInterval(() => {
                 // Randomly select a card
-                let currentIndex = Math.floor(Math.random() * unrevealedCards.length);
-                const card = unrevealedCards[currentIndex];
-                if (!card.classList.contains('revealed')) {
-                    // Randomly choose between grey (1), red (2), and blue (3)
-                    const randomColor = Math.floor(Math.random() * 3) + 1;
-                    
-                    // Simulate card click with specific color
-                    simulateCardReveal(card, randomColor);
-                }                
+                let currentIndex = Math.floor(Math.random() * cards.length);
+                const card = cards[currentIndex];
+                // Randomly choose between grey (1), red (2), and blue (3)
+                const randomColor = Math.floor(Math.random() * 3) + 1;
+                
+                // Simulate card click with specific color
+                simulateCardReveal(card, randomColor);
             }, 1000);
         }
 
@@ -290,18 +242,6 @@
                 card.classList.remove('flipping');
             }, 600);
         }
-        // Add demo button functionality
-        document.getElementById('demoButton').addEventListener('click', function() {
-            this.classList.toggle('active');
-            if (!isDemoMode) {
-                isDemoMode = true;
-                startDemoMode();
-            } else {
-                isDemoMode = false;
-                stopDemoMode();
-            }
-        });
-
 
         // Function to preload and verify images exist
         async function preloadImage(url) {
@@ -368,6 +308,8 @@
             ];
             wordList.push(...sampleWords);
         }
+    
+        
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -490,6 +432,15 @@
             }
         }
         initializeBoard();
+
+        // Demo?
+        let demo = params.get('demo');
+        console.log("demo:", imgset);
+        if (demo != null) {
+            isDemoMode = true;
+            startDemoMode();
+        }
+
     </script>
 </body>
 </html>
