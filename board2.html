@@ -186,7 +186,7 @@
                 // Randomly choose between grey (1), red (2), and blue (3)
                 var randomColor = Math.floor(Math.random() * 3) + 1;
                 // IF card is center card, make it 50% change to change it to black(4)
-                if (randomIndex == 12) {
+                if (randomIndex == 12 && Math.floor(Math.random() * 2) < 1) {
                     randomColor = 4;
                 }
                 // Simulate card click with specific color
