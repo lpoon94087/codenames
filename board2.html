@@ -177,18 +177,17 @@
     <script>
         function startDemoMode() {
             if (demoInterval) return;
-            const cards = Array.from(document.querySelectorAll('.card'));
-            const unrevealedCards = cards.filter(card => !card.classList.contains('revealed'));
 
             demoInterval = setInterval(() => {
+                const cards = Array.from(document.querySelectorAll('.card'));
                 // Randomly select a card
-                let currentIndex = Math.floor(Math.random() * cards.length);
-                const card = cards[currentIndex];
+                const randomIndex = Math.floor(Math.random() * cards.length);
+                const randomCard = cards[randomIndex];
                 // Randomly choose between grey (1), red (2), and blue (3)
                 const randomColor = Math.floor(Math.random() * 3) + 1;
                 
                 // Simulate card click with specific color
-                simulateCardReveal(card, randomColor);
+                simulateCardReveal(randomCard, randomColor);
             }, 1000);
         }
 
