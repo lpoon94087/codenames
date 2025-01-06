@@ -212,6 +212,10 @@
         let blackImages = [];
         let isDemoMode = false;
         let demoInterval = null;
+        let agentIndex = 0;
+        let agentBgIndex = 0;
+        let bystanderIndex = 0;
+        let bystanderBgIndex = 0;
     </script>
     <script src="data.js"></script>
     
@@ -400,10 +404,6 @@
                 shuffleArray(agentBgImages);
                 shuffleArray(bystanderImages);
                 shuffleArray(bystanderBgImages);
-                let agentIndex = 0;
-                let agentBgIndex = 0;
-                let bystanderIndex = 0;
-                let bystanderBgIndex = 0;
                 
                 selectedWords.forEach(word => {
                     const wrapper = document.createElement('div');
