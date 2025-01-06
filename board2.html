@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Board</title>
     <style>
-        /* ... (keeping existing body and board styles) ... */
         body {
             background-color: #2e1810;
             display: flex;
@@ -16,6 +15,45 @@
             margin: 0;
             font-family: Arial, sans-serif;
             perspective: 1000px;
+        }
+
+        .container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .menu {
+            background-color: #3a2a22;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 3px solid #473831;
+        }
+
+        .menu-item {
+            width: 40px;
+            height: 40px;
+            background-color: #d2b48c;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #2e1810;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-2px);
+            background-color: #e3c5a8;
         }
 
         .board {
@@ -157,7 +195,13 @@
     </style>
 </head>
 <body>
-    <div class="board" id="wordBoard"></div>
+    <div class="container">
+        <div class="menu">
+            <button class="menu-item" title="Demo">▶️</button>
+            <button class="menu-item" title="Info">ℹ️</button>
+        </div>
+        <div class="board" id="wordBoard"></div>
+    </div>
 
     <script>
         let wordList = []; 
