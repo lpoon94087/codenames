@@ -305,10 +305,11 @@
         let imgset = params.get('imgset');
         console.log("imgset:", imgset);
         if (imgset != null) {
-            loadCustomImages(imgset);
+            // Do nothing.
         } else {
             imgset = "ba";
         }
+        console.log('Using imgset:', imgset);
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
