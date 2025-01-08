@@ -285,7 +285,7 @@
         }
 
         async function loadAllImages(imgset) {
-            agentImages = await loadImages(imgset, "agent");
+            agentImages = await loadImages(imgset, "agent", 500);
             agentBgImages = await loadImages(imgset, "agentbg", 10);
             bystanderImages = await loadImages(imgset, "bystander");
             bystanderBgImages = await loadImages(imgset, "bystanderbg", 10);
