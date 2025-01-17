@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Board</title>
     <style>
-       body {
+        body {
             background-color: #2e1810;
             display: flex;
             justify-content: center;
@@ -32,15 +32,14 @@
             border-radius: 12px;
             padding: 8px;
             background-color: #3a2a22;
-            min-width: 160px;  /* Added minimum width */
+            min-width: 160px;
             width: 100%;
         }
 
-        /* This maintains the 5:3 aspect ratio */
         .card-wrapper::before {
             content: '';
             display: block;
-            padding-top: 60%; /* 3/5 = 0.6 = 60% */
+            padding-top: 60%;
         }
 
         .card {
@@ -52,7 +51,7 @@
             font-weight: bold;
             text-align: center;
             position: absolute;
-            top: 8px;  /* Match padding of wrapper */
+            top: 8px;
             left: 8px;
             right: 8px;
             bottom: 8px;
@@ -63,6 +62,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .card-text {
@@ -71,86 +71,69 @@
             border-radius: 4px;
             color: #000;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 3;
         }
 
-        .card.revealed {
-            color: transparent;
+        .card-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+
+        .card-foreground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .card.revealed .card-text {
             display: none;
         }
 
-        .card.revealed.color-2 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.revealed.color-2::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 0, 0, 0.5);
-            pointer-events: none;
-            border-radius: 8px;
+        .card.revealed .card-foreground {
+            opacity: 1;
         }
 
-        .card.revealed.color-3 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        .card.revealed .card-overlay {
+            opacity: 0.5;
         }
-        .card.revealed.color-3::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+
+        .card.revealed.color-2 .card-overlay {
+            background-color: rgba(255, 0, 0, 0.9);
+        }
+
+        .card.revealed.color-3 .card-overlay {
             background-color: rgba(0, 0, 255, 0.5);
-            pointer-events: none;
-            border-radius: 8px;
         }
 
-        .card.revealed.color-1 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.revealed.color-1::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            border-radius: 8px;
-        }
-
-        .card.revealed.color-4 {
-            background-image: url('img/laurie_200.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .card.revealed.color-4::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            border-radius: 8px;
-        }
-
+        /* ... (keeping existing animation and hover styles) ... */
         .card.flipping {
             animation: flip 0.6s ease-in-out;
         }
@@ -177,31 +160,138 @@
 
     <script>
         let wordList = []; 
-        let redImages = ["img/red_0.png", "img/red_1.png", "img/red_2.png", "img/red_3.png", "img/red_4.png", "img/red_5.png", "img/red_6.png"];
-        let blueImages = ["img/blue_0.png", "img/blue_1.png", "img/blue_2.png", "img/blue_3.png", "img/blue_4.png", "img/blue_5.png", "img/blue_6.png"];
-        let greyImages = ["img/grey_0.png", "img/grey_1.png", "img/grey_2.png", "img/grey_3.png", "img/grey_4.png", "img/grey_5.png"];
-        let blackImages = ["img/black.png"];
+        let agentImages = [];
+        let agentBgImages = [];
+        let bystanderImages = [];
+        let bystanderBgImages = [];
+        let blackImages = [];
+        let isDemoMode = false;
+        let demoInterval = null;
+        let agentIndex = 0;
+        let agentBgIndex = 0;
+        let bystanderIndex = 0;
+        let bystanderBgIndex = 0;
     </script>
     <script src="data.js"></script>
-
+    
     <script>
-        function loadCustomImagesColor(color, imgset, colorImages) {
-            let images = [];
-            for (let i = 0; i < 20; i++) {
-                const testImage = "img/" + imgset + "/" + color + "_" + i + ".png";
-                images.push(testImage);
-            }
-            if (images.length > 0) {
-                colorImages.length = 0;
-                colorImages.push(...images);
+        function startDemoMode() {
+            if (demoInterval) return;
+
+            demoInterval = setInterval(() => {
+                const cards = Array.from(document.querySelectorAll('.card'));
+                // Randomly select a card
+                const randomIndex = Math.floor(Math.random() * cards.length);
+                const randomCard = cards[randomIndex];
+                // Randomly choose between grey (1), red (2), and blue (3)
+                var randomColor = Math.floor(Math.random() * 3) + 1;
+                // IF card is center card, make it 50% change to change it to black(4)
+                if (randomIndex == 12 && Math.floor(Math.random() * 2) < 1) {
+                    randomColor = 4;
+                }
+                // Simulate card click with specific color
+                simulateCardReveal(randomCard, randomColor);
+            }, 1000);
+        }
+
+        function stopDemoMode() {
+            if (demoInterval) {
+                clearInterval(demoInterval);
+                demoInterval = null;
             }
         }
-        function loadCustomImages(imgset) {
-            loadCustomImagesColor("red", imgset, redImages);  
-            loadCustomImagesColor("blue", imgset, blueImages);  
-            loadCustomImagesColor("grey", imgset, greyImages);  
-            loadCustomImagesColor("black", imgset, blackImages);  
+        
+       function simulateCardReveal(card, colorIndex) {
+            if (card.classList.contains('flipping')) return;
+
+            // Remove any existing reveal timers
+            if (card.revealTimer) {
+                clearTimeout(card.revealTimer);
+                card.revealTimer = null;
+            }
+
+            card.classList.remove('revealed');
+            card.classList.add('flipping');
+
+            setTimeout(() => {
+                card.dataset.colorIndex = colorIndex;
+                card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
+                card.classList.add(`color-${colorIndex}`);
+
+                const backgroundLayer = card.querySelector('.card-background');
+                const foregroundLayer = card.querySelector('.card-foreground');
+                
+                backgroundLayer.style.backgroundImage = null;
+                foregroundLayer.style.backgroundImage = null;
+
+                if (colorIndex === 2 || colorIndex === 3 || colorIndex === 1 || colorIndex === 4) {
+                    card.revealTimer = setTimeout(() => {
+                        card.classList.add('revealed');
+                        switch(colorIndex) {
+                            case 1: // Grey
+                                if (bystanderIndex >= bystanderImages.length) bystanderIndex = 0;
+                                if (bystanderBgIndex >= bystanderBgImages.length) bystanderBgIndex = 0;
+                                backgroundLayer.style.backgroundImage = `url('${bystanderBgImages[bystanderBgIndex++]}')`;
+                                foregroundLayer.style.backgroundImage = `url('${bystanderImages[bystanderIndex++]}')`;
+                                break;
+                            case 2: // Red
+                            case 3: // Blue
+                                if (agentIndex >= agentImages.length) agentIndex = 0;
+                                if (agentBgIndex >= agentBgImages.length) agentBgIndex = 0;
+                                backgroundLayer.style.backgroundImage = `url('${agentBgImages[agentBgIndex++]}')`;
+                                foregroundLayer.style.backgroundImage = `url('${agentImages[agentIndex++]}')`;
+                                break;
+                            case 4:
+                                foregroundLayer.style.backgroundImage = `url('${blackImages[0]}')`;
+                                break;
+                        }
+                    }, 4000);
+                }
+            }, 300);
+
+            setTimeout(() => {
+                card.classList.remove('flipping');
+            }, 600);
         }
+        
+        // Function to preload and verify images exist
+        async function preloadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(url);
+                img.onerror = () => reject(url);
+                img.src = url;
+            });
+        }
+
+        // Function to load images for a specific type
+        async function loadImages(imgset, type, maxImages = 100) {
+            const images = [];
+            const loadPromises = [];
+            
+            // Try loading images with index from 0 to maxImages
+            for (let i = 0; i < maxImages; i++) {
+                const imageUrl = `img/${imgset}/${type}_${i}.png`;
+                loadPromises.push(
+                    preloadImage(imageUrl)
+                        .then(url => images.push(url))
+                        .catch(() => {/* Image doesn't exist, ignore */})
+                );
+            }
+            
+            // Wait for all image load attempts to complete
+            await Promise.all(loadPromises);
+            return images;
+        }
+
+        async function loadAllImages(imgset) {
+            agentImages = await loadImages(imgset, "agent", 600);
+            agentBgImages = await loadImages(imgset, "agentbg", 10);
+            bystanderImages = await loadImages(imgset, "bystander", 200);
+            bystanderBgImages = await loadImages(imgset, "bystanderbg", 10);
+            blackImages = await loadImages(imgset, "black", 1);
+        }
+        
         const queryString = window.location.search;
         const params = new URLSearchParams(queryString);
         const addon = params.get('addon');
@@ -212,12 +302,14 @@
             const moreWords = addon.split(",");
             wordList.push(...moreWords);
         }
-        const imgset = params.get('imgset');
+        let imgset = params.get('imgset');
         console.log("imgset:", imgset);
         if (imgset != null) {
-            loadCustomImages(imgset);
+            // Do nothing.
+        } else {
+            imgset = "ba";
         }
-
+        console.log('Using imgset:', imgset);
         if (wordList.length < 25) {
             const sampleWords = [
                 'VIOLIN', 'LUMBERJACK', 'BATTLESHIP', 'BANANA', 'STORY',
@@ -228,100 +320,139 @@
             ];
             wordList.push(...sampleWords);
         }
-
+    
+        
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [arr[i], arr[j]] = [arr[j], arr[i]];
             }
         }
-        
+
         function getRandomItems(arr, count) {
             const shuffled = [...arr];
             shuffleArray(shuffled);
             return shuffled.slice(0, count);
         }
 
-        const selectedWords = getRandomItems(wordList, 25);
-        const board = document.getElementById('wordBoard');
-        shuffleArray(redImages);
-        shuffleArray(blueImages);
-        let redImageIndex = 0;
-        let blueImageIndex = 0;
-        let greyImageIndex = 0;
+        async function initializeBoard() {
+            try {
+                // Load all the images first
+                await loadAllImages(imgset);
+                console.log(`Loaded ${agentImages.length} agent images`);
+                console.log(`Loaded ${agentBgImages.length} agentbg images`);
+                console.log(`Loaded ${bystanderImages.length} bystander images`);
+                console.log(`Loaded ${bystanderBgImages.length} bystanderbg images`);
+                console.log(`Loaded ${blackImages.length} black images`);
+                
+                // Select words and initialize board
+                const selectedWords = getRandomItems(wordList, 25);
+                const board = document.getElementById('wordBoard');
+                shuffleArray(agentImages);
+                shuffleArray(agentBgImages);
+                shuffleArray(bystanderImages);
+                shuffleArray(bystanderBgImages);
+                
+                selectedWords.forEach(word => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'card-wrapper';
         
-        selectedWords.forEach(word => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'card-wrapper';
-
-            const card = document.createElement('div');
-            card.className = 'card color-0';
-            card.dataset.colorIndex = '0';
-            
-            const textSpan = document.createElement('span');
-            textSpan.className = 'card-text';
-            textSpan.textContent = word;
-            card.appendChild(textSpan);
-            
-            let revealTimer = null;
-
-            card.addEventListener('click', (e) => {
-                if (card.classList.contains('flipping')) return;
-
-                if (revealTimer) {
-                    clearTimeout(revealTimer);
-                    revealTimer = null;
-                }
-
-                card.classList.remove('revealed');
-                card.style.backgroundImage = '';
-
-                card.classList.add('flipping');
-
-                setTimeout(() => {
-                    const currentIndex = parseInt(card.dataset.colorIndex);
-                    const nextIndex = (currentIndex + 1) % 5;
-                    card.dataset.colorIndex = nextIndex;
-
-                    card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
-                    card.classList.add(`color-${nextIndex}`);
-
-                    if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
-                        revealTimer = setTimeout(() => {
-                            card.classList.add('revealed');
-                            switch(nextIndex) {
-                                case 1:
-                                    if (greyImageIndex >= greyImages.length) { greyImageIndex = 0; }
-                                    const greyImage = greyImages[greyImageIndex++];
-                                    card.style.backgroundImage = `url('${greyImage}')`;
-                                    break;
-                                case 2:
-                                    if (redImageIndex >= redImages.length) { redImageIndex = 0; }
-                                    const redImage = redImages[redImageIndex++];
-                                    card.style.backgroundImage = `url('${redImage}')`;
-                                    break;
-                                case 3:
-                                    if (blueImageIndex >= blueImages.length) { blueImageIndex = 0; }
-                                    const blueImage = blueImages[blueImageIndex++];
-                                    card.style.backgroundImage = `url('${blueImage}')`;
-                                    break;
-                                case 4:
-                                   const blackImage = blackImages[0];
-                                   card.style.backgroundImage = `url('${blackImage}')`;
-                                    break;
+                    const card = document.createElement('div');
+                    card.className = 'card color-0';
+                    card.dataset.colorIndex = '0';
+                    
+                    // Add background layer
+                    const backgroundLayer = document.createElement('div');
+                    backgroundLayer.className = 'card-background';
+                    
+                    // Add foreground layer
+                    const foregroundLayer = document.createElement('div');
+                    foregroundLayer.className = 'card-foreground';
+                    
+                    // Add overlay layer
+                    const overlayLayer = document.createElement('div');
+                    overlayLayer.className = 'card-overlay';
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'card-text';
+                    textSpan.textContent = word;
+                    
+                    // Append layers in correct order
+                    card.appendChild(backgroundLayer);
+                    card.appendChild(foregroundLayer);
+                    card.appendChild(overlayLayer);
+                    card.appendChild(textSpan);
+                    
+                    let revealTimer = null;
+        
+                    card.addEventListener('click', (e) => {
+                        // Modify the click event listener to not respond during flipping or demo mode
+                        if (isDemoMode || card.classList.contains('flipping')) return;
+        
+                        if (revealTimer) {
+                            clearTimeout(revealTimer);
+                            revealTimer = null;
+                        }        
+                        card.classList.remove('revealed');
+                        card.classList.add('flipping');
+        
+                        setTimeout(() => {
+                            const currentIndex = parseInt(card.dataset.colorIndex);
+                            const nextIndex = (currentIndex + 1) % 5;
+                            card.dataset.colorIndex = nextIndex;
+        
+                            card.classList.remove('color-0', 'color-1', 'color-2', 'color-3', 'color-4');
+                            card.classList.add(`color-${nextIndex}`);
+                            backgroundLayer.style.backgroundImage = null;
+                            foregroundLayer.style.backgroundImage = null;
+        
+                            if (nextIndex === 2 || nextIndex === 3 || nextIndex === 1 || nextIndex === 4) {
+                                revealTimer = setTimeout(() => {
+                                    card.classList.add('revealed');
+                                    switch(nextIndex) {
+                                        case 1:
+                                            if (bystanderIndex >= bystanderImages.length) { bystanderIndex = 0; }
+                                            if (bystanderBgIndex >= bystanderBgImages.length) { bystanderBgIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${bystanderBgImages[bystanderBgIndex++]}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${bystanderImages[bystanderIndex++]}')`;
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            if (agentIndex >= agentImages.length) { agentIndex = 0; }
+                                            if (agentBgIndex >= agentBgImages.length) { agentBgIndex = 0; }
+                                            backgroundLayer.style.backgroundImage = `url('${agentBgImages[agentBgIndex++]}')`;
+                                            foregroundLayer.style.backgroundImage = `url('${agentImages[agentIndex++]}')`;
+                                            break;
+                                        case 4:
+                                            foregroundLayer.style.backgroundImage = `url('${blackImages[0]}')`;
+                                            break;
+                                    }
+                                }, 4000);
                             }
-                        }, 4000);
-                    }
-                }, 300);
+                        }, 300);
+        
+                        setTimeout(() => {
+                            card.classList.remove('flipping');
+                        }, 600);
+                    });
+        
+                    wrapper.appendChild(card);
+                    board.appendChild(wrapper);
+                });
+            } catch (error) {
+                console.error("Error initializing board", error);
+            }
+        }
+        initializeBoard();
 
-                setTimeout(() => {
-                    card.classList.remove('flipping');
-                }, 600);
-            });
+        // Demo?
+        let demo = params.get('demo');
+        console.log("demo:", imgset);
+        if (demo != null) {
+            isDemoMode = true;
+            startDemoMode();
+        }
 
-            wrapper.appendChild(card);
-            board.appendChild(wrapper);
-        });
     </script>
 </body>
 </html>
